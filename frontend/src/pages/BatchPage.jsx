@@ -1,0 +1,347 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useBatchAPI } from '../api/batches';
+import { useAuth } from '../context/AuthContext';
+import { UOMs, Countries } from '../constants/options';
+import { useFormAPI } from '../api/forms';
+import '../styles/BatchPage.css';
+
+const BatchPage = () => {
+  const [formData, setFormData] = useState({
+    selectedForm: '',
+    dynamicFormData: {},
+    country: '',
+    production_type: '',
+    production_date: '',
+    form_gate_sourced: false,
+    cluster_group: '',
+    quantity: '',
+    uoms: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [batchForms, setBatchForms] = useState([]);
+
+  const navigate = useNavigate();
+  const { createBatch } = useBatchAPI();
+  const { getForms } = useFormAPI();
+  const { user } = useAuth();
+
+  // Fetch forms of type 'batch'
+  useEffect(() => {
+    const fetchBatchForms = async () => {
+      try {
+        const allForms = await getForms();
+        const filteredForms = allForms.filter(f => f.association_type === 'batch');
+        setBatchForms(filteredForms);
+      } catch (err) {
+        console.error('Error fetching forms:', err);
+      }
+    };
+    fetchBatchForms();
+  }, [getForms]);
+
+  // Handle static field change
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      };
+
+      // Reset dynamic form data if a new form is selected
+      if (name === 'selectedForm') {
+        updated.dynamicFormData = {};
+      }
+
+      return updated;
+    });
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    setApiError('');
+  };
+
+  // Handle dynamic fields (from selected form)
+  const handleChangeDynamicField = (fieldName, value) => {
+    setFormData(prev => ({
+      ...prev,
+      dynamicFormData: {
+        ...prev.dynamicFormData,
+        [fieldName]: value,
+      },
+    }));
+
+    if (errors[`dynamic_${fieldName}`]) {
+      setErrors(prev => ({ ...prev, [`dynamic_${fieldName}`]: '' }));
+    }
+  };
+
+  // Validate form before submission
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.country) newErrors.country = 'Country is required';
+    if (!formData.production_type) newErrors.production_type = 'Production Type is required';
+    if (!formData.production_date) newErrors.production_date = 'Production Date is required';
+    if (!formData.cluster_group) newErrors.cluster_group = 'Cluster Group is required';
+    if (!formData.quantity || formData.quantity <= 0) newErrors.quantity = 'Quantity must be positive';
+    if (!formData.uoms) newErrors.uoms = 'UOM is required';
+
+    // Validate dynamic form fields if applicable
+    if (formData.selectedForm) {
+      const selectedFormObject = batchForms.find(
+        f => String(f.form_id) === String(formData.selectedForm)
+      );
+
+      if (selectedFormObject?.fields) {
+        selectedFormObject.fields.forEach(field => {
+          if (field.required && !formData.dynamicFormData[field.name]) {
+            newErrors[`dynamic_${field.name}`] = `${field.name} is required`;
+          }
+        });
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Submit the form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setApiError('');
+
+    try {
+      const { selectedForm, dynamicFormData, ...rest } = formData;
+
+      const payload = {
+        ...rest,
+        quantity: parseInt(formData.quantity, 10),
+        form: selectedForm || null,
+        form_data: dynamicFormData,
+      };
+
+      const newBatch = await createBatch(payload);
+      navigate(`/bags/new?batchId=${newBatch.batch_id}&fromBatchCreation=true`);
+    } catch (err) {
+      console.error('Batch creation failed:', err);
+      setApiError(err.response?.data?.detail || 'Failed to create batch. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="batch-page-container">
+      <div className="batch-card">
+        <h1 className="batch-card-title">Create New Batch</h1>
+
+        {apiError && <div className="error-message">{apiError}</div>}
+
+        <form onSubmit={handleSubmit} className="batch-form">
+          {/* Country */}
+          <div className="form-group">
+            <label htmlFor="country">Country</label>
+            <select
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.country ? 'error' : ''}
+            >
+              <option value="">Select Country</option>
+              {Countries.map(c => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+            {errors.country && <span className="error-text">{errors.country}</span>}
+          </div>
+
+          {/* Production Type */}
+          <div className="form-group">
+            <label htmlFor="production_type">Production Type</label>
+            <input
+              id="production_type"
+              name="production_type"
+              type="text"
+              value={formData.production_type}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.production_type ? 'error' : ''}
+            />
+            {errors.production_type && <span className="error-text">{errors.production_type}</span>}
+          </div>
+
+          {/* Production Date */}
+          <div className="form-group">
+            <label htmlFor="production_date">Production Date</label>
+            <input
+              id="production_date"
+              name="production_date"
+              type="date"
+              value={formData.production_date}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.production_date ? 'error' : ''}
+            />
+            {errors.production_date && <span className="error-text">{errors.production_date}</span>}
+          </div>
+
+          {/* Checkbox */}
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                name="form_gate_sourced"
+                checked={formData.form_gate_sourced}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+              Form Gate Sourced
+            </label>
+          </div>
+
+          {/* Cluster Group */}
+          <div className="form-group">
+            <label htmlFor="cluster_group">Cluster Group</label>
+            <input
+              id="cluster_group"
+              name="cluster_group"
+              type="text"
+              value={formData.cluster_group}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.cluster_group ? 'error' : ''}
+            />
+            {errors.cluster_group && <span className="error-text">{errors.cluster_group}</span>}
+          </div>
+
+          {/* Quantity */}
+          <div className="form-group">
+            <label htmlFor="quantity">Quantity</label>
+            <input
+              id="quantity"
+              name="quantity"
+              type="number"
+              value={formData.quantity}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.quantity ? 'error' : ''}
+            />
+            {errors.quantity && <span className="error-text">{errors.quantity}</span>}
+          </div>
+
+          {/* UOMs */}
+          <div className="form-group">
+            <label htmlFor="uoms">UOMs</label>
+            <select
+              id="uoms"
+              name="uoms"
+              value={formData.uoms}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.uoms ? 'error' : ''}
+            >
+              <option value="">Select UOM</option>
+              {UOMs.map(u => (
+                <option key={u.value} value={u.value}>{u.label}</option>
+              ))}
+            </select>
+            {errors.uoms && <span className="error-text">{errors.uoms}</span>}
+          </div>
+
+          {/* Select Form */}
+          <div className="form-group">
+            <label htmlFor="form_selection">Select Form</label>
+            <select
+              id="form_selection"
+              name="selectedForm"
+              value={formData.selectedForm}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={errors.selectedForm ? 'error' : ''}
+            >
+              <option value="">No Form Selected</option>
+              {batchForms.map(f => (
+                <option key={f.form_id} value={f.form_id}>{f.name}</option>
+              ))}
+            </select>
+            {errors.selectedForm && <span className="error-text">{errors.selectedForm}</span>}
+          </div>
+
+          {/* Dynamic Form Fields */}
+          {formData.selectedForm && (() => {
+            const selectedForm = batchForms.find(
+              f => String(f.form_id) === String(formData.selectedForm)
+            );
+
+            if (!selectedForm) return null;
+            if (!selectedForm.fields?.length)
+              return <div>No fields available for this form.</div>;
+
+            return selectedForm.fields.map(field => (
+              <div className="form-group" key={field.name}>
+                <label htmlFor={field.name}>
+                  {field.name} {field.required && '(Required)'}
+                </label>
+
+                {['text', 'email', 'url', 'date', 'number'].includes(field.field_type) && (
+                  <input
+                    id={field.name}
+                    type={field.field_type}
+                    value={formData.dynamicFormData[field.name] || ''}
+                    onChange={(e) => handleChangeDynamicField(field.name, e.target.value)}
+                    disabled={isLoading}
+                    className={errors[`dynamic_${field.name}`] ? 'error' : ''}
+                  />
+                )}
+
+                {field.field_type === 'boolean' && (
+                  <input
+                    type="checkbox"
+                    checked={!!formData.dynamicFormData[field.name]}
+                    onChange={(e) => handleChangeDynamicField(field.name, e.target.checked)}
+                    disabled={isLoading}
+                  />
+                )}
+
+                {field.field_type === 'select' && (
+                  <select
+                    value={formData.dynamicFormData[field.name] || ''}
+                    onChange={(e) => handleChangeDynamicField(field.name, e.target.value)}
+                    disabled={isLoading}
+                  >
+                    <option value="">-- Select --</option>
+                    {field.validation_rules?.choices?.map(choice => (
+                      <option key={choice} value={choice}>{choice}</option>
+                    ))}
+                  </select>
+                )}
+
+                {errors[`dynamic_${field.name}`] && (
+                  <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                )}
+              </div>
+            ));
+          })()}
+
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading ? 'Creating...' : 'Create Batch'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default BatchPage;

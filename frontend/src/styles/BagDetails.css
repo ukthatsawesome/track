@@ -1,0 +1,44 @@
+/* BagDetails.css */
+
+.bag-details-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bag-details-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.detail-item strong {
+    color: #555;
+    display: inline-block;
+    width: 180px; /* Adjust as needed for alignment */
+}
+
+.error-message,
+.no-data-message {
+    text-align: center;
+    color: #e74c3c;
+    font-size: 18px;
+    margin-top: 50px;
+}
+
+.detail-item pre {
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap; /* Ensures long text wraps */
+    word-break: break-all; /* Breaks long words */
+}

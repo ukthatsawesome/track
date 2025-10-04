@@ -1,0 +1,261 @@
+.form-details-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-details-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* --- View Mode Styles --- */
+
+.form-view-mode .form-actions {
+    justify-content: center;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.detail-item strong {
+    color: #555;
+    display: inline-block;
+    width: 150px;
+}
+
+.form-fields-list {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.form-fields-list h3, .form-fields-section h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.field-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.field-item h4 {
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #e0e0e0;
+    padding-bottom: 5px;
+}
+
+.field-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.field-item strong {
+    color: #333;
+}
+
+.error-message,
+.no-data-message {
+    text-align: center;
+    color: #e74c3c;
+    font-size: 18px;
+    margin-top: 50px;
+}
+
+/* --- Edit Mode Styles --- */
+
+.form-edit-mode .form-group {
+    margin-bottom: 15px;
+}
+
+.form-edit-mode label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-edit-mode input[type="text"],
+.form-edit-mode input[type="number"],
+.form-edit-mode input[type="date"],
+.form-edit-mode input[type="url"],
+.form-edit-mode textarea,
+.form-edit-mode select {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-edit-mode input[type="text"]:focus,
+.form-edit-mode input[type="number"]:focus,
+.form-edit-mode input[type="date"]:focus,
+.form-edit-mode input[type="url"]:focus,
+.form-edit-mode textarea:focus,
+.form-edit-mode select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.form-edit-mode .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.form-edit-mode .checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto; /* Override width for checkboxes */
+}
+
+.form-edit-mode .checkbox-group .checkbox-label span {
+    font-weight: normal;
+}
+
+.form-edit-mode .error-text {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-edit-mode input.error,
+.form-edit-mode textarea.error,
+.form-edit-mode select.error {
+    border-color: #e74c3c;
+}
+
+.form-fields-section {
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    margin-top: 20px;
+}
+
+.form-field-item {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.form-field-item:last-child {
+    margin-bottom: 0;
+}
+
+.remove-field-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 15px;
+    float: right;
+}
+
+.remove-field-button:hover {
+    background-color: #c82333;
+}
+
+.add-field-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    display: block;
+    width: 100%; /* Make button full width of its container */
+}
+
+.add-field-button:hover {
+    background-color: #218838;
+}
+
+/* --- Action Buttons --- */
+
+/* Common styles for action buttons container */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.form-actions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.form-actions .submit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.form-actions .submit-button:hover {
+    background-color: #0056b3;
+}
+
+.form-actions .cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.form-actions .cancel-button:hover {
+    background-color: #5a6268;
+}
+
+.edit-button {
+    background-color: #17a2b8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #138496;
+}
+
+.form-edit-mode .detail-item {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+}

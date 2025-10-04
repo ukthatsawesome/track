@@ -1,0 +1,156 @@
+/* FormPage.css */
+
+.form-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%);
+    padding: 20px;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-card-title {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.form-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-fields-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.form-fields-section h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-field-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+}
+
+.form-field-item .form-group {
+    margin-bottom: 0;
+}
+
+.form-field-item .form-group label {
+    font-size: 13px;
+    color: #666;
+}
+
+.form-field-item .form-group input[type="text"],
+.form-field-item .form-group select {
+    padding: 10px 12px;
+    font-size: 15px;
+    border-radius: 6px;
+}
+
+.form-field-item .form-group input:focus,
+.form-field-item .form-group select:focus {
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.form-field-item .checkbox-label {
+    font-size: 14px;
+}
+
+.add-field-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.add-field-button:hover {
+    background-color: #218838;
+}
+
+.submit-button {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.submit-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .form-card {
+        padding: 25px;
+        margin: 0 15px;
+    }
+
+    .form-card-title {
+        font-size: 24px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-field-item .form-group input[type="text"],
+    .form-field-item .form-group select {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+    .submit-button,
+    .add-field-button {
+        padding: 12px 15px;
+        font-size: 16px;
+    }
+}

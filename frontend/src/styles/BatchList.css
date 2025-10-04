@@ -1,0 +1,116 @@
+.filter-sort-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  align-items: center;
+}
+
+.filter-sort-controls button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-sort-controls button:hover {
+  background-color: #0056b3;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 200px; /* Adjust width as needed */
+}/* BatchList.css */
+
+/* Sort Filter Styles */
+.sort-filter-container {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.sort-filter-container button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.sort-filter-container button:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.sort-filter-container button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.sort-filter-container button.clear-sort {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.sort-filter-container button.clear-sort:hover {
+  background: #c82333;
+  border-color: #bd2130;
+}
+
+.batch-list-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.batch-list-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.batch-list {
+  list-style: none;
+  padding: 0;
+}
+
+.batch-list-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.batch-list-item:hover {
+  background-color: #eee;
+}
+
+.batch-list-item a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.batch-list-item h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #007bff;
+}
+
+.batch-list-item p {
+  margin: 0;
+  color: #555;
+  font-size: 0.9em;
+}
+
+/* Add more styles as needed to match your project's design */
