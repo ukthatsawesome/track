@@ -18,6 +18,7 @@ import BatchDetails from '../pages/BatchDetails';
 import BagDetails from '../pages/BagDetails';
 import FormDetails from '../pages/FormDetails';
 import Submissions from '../pages/Submissions';
+import SubmissionList from '../pages/SubmissionList';
 
 // ------------------------
 // Protected Route Wrapper
@@ -150,8 +151,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-
-      {/* Form Submission */}
+      {/* Form Submission (fill) */}
       <Route
         path="/submissions/:formId"
         element={
@@ -160,7 +160,15 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-
+      {/* Form Submissions (list) */}
+      <Route
+        path="/forms/:formId/submissions"
+        element={
+          <ProtectedRoute>
+            <SubmissionList />
+          </ProtectedRoute>
+        }
+      />
       {/* Reports */}
       <Route
         path="/reports"

@@ -215,7 +215,7 @@ const BagPage = () => {
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Form Fields</h3>
         {selectedForm.fields.map((field) => {
-          const value = formData.dynamicFormData[field.name] || '';
+          const value = formData.dynamicFormData[field.name] ?? '';
 
           switch (field.field_type) {
             case 'text':
@@ -234,6 +234,9 @@ const BagPage = () => {
                     onChange={(e) => handleChangeDynamicField(field.name, e.target.value)}
                     required={field.required}
                   />
+                  {errors?.[`dynamic_${field.name}`] && (
+                    <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                  )}
                 </div>
               );
 
@@ -242,16 +245,107 @@ const BagPage = () => {
                 <label key={field.name} className="inline-flex items-center">
                   <input
                     type="checkbox"
-                    checked={value === 'true'}
-                    onChange={(e) =>
-                      handleChangeDynamicField(field.name, e.target.checked.toString())
-                    }
+                    checked={value === true || value === 'true'}
+                    onChange={(e) => handleChangeDynamicField(field.name, e.target.checked)}
+                    disabled={isLoading}
                   />
-                  <span className="ml-2">{field.name}</span>
+                  <span className="ml-2">
+                    {field.name} {field.required && <span className="text-red-500">*</span>}
+                  </span>
+                  {errors?.[`dynamic_${field.name}`] && (
+                    <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                  )}
                 </label>
               );
 
+            case 'select':
+              return (
+                <div key={field.name} className="form-group">
+                  <label>
+                    {field.name} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  <select
+                    value={value}
+                    onChange={(e) => handleChangeDynamicField(field.name, e.target.value)}
+                    required={field.required}
+                    disabled={isLoading}
+                  >
+                    <option value="">-- Select --</option>
+                    {field.validation_rules?.choices?.map((choice) => (
+                      <option key={choice} value={choice}>
+                        {choice}
+                      </option>
+                    ))}
+                  </select>
+                  {errors?.[`dynamic_${field.name}`] && (
+                    <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                  )}
+                </div>
+              );
+
+            case 'radio':
+              return (
+                <div key={field.name} className="form-group radio-group">
+                  <label>
+                    {field.name} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  {field.validation_rules?.choices?.map((choice) => (
+                    <label key={choice} className="inline-flex items-center mr-4">
+                      <input
+                        type="radio"
+                        name={field.name}
+                        value={choice}
+                        checked={value === choice}
+                        onChange={() => handleChangeDynamicField(field.name, choice)}
+                        disabled={isLoading}
+                        required={field.required}
+                      />
+                      <span className="ml-2">{choice}</span>
+                    </label>
+                  ))}
+                  {errors?.[`dynamic_${field.name}`] && (
+                    <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                  )}
+                </div>
+              );
+
+            case 'checkbox':
+              return (
+                <div key={field.name} className="form-group checkbox-group">
+                  <label>
+                    {field.name} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  {field.validation_rules?.choices?.map((choice) => {
+                    const selected = Array.isArray(value)
+                      ? value
+                      : (value || '').split(',').filter(Boolean);
+                    const isChecked = selected.includes(choice);
+                    return (
+                      <label key={choice} className="inline-flex items-center mr-4">
+                        <input
+                          type="checkbox"
+                          value={choice}
+                          checked={isChecked}
+                          onChange={(e) => {
+                            const next = e.target.checked
+                              ? [...selected, choice]
+                              : selected.filter((v) => v !== choice);
+                            handleChangeDynamicField(field.name, next.join(','));
+                          }}
+                          disabled={isLoading}
+                        />
+                        <span className="ml-2">{choice}</span>
+                      </label>
+                    );
+                  })}
+                  {errors?.[`dynamic_${field.name}`] && (
+                    <span className="error-text">{errors[`dynamic_${field.name}`]}</span>
+                  )}
+                </div>
+              );
+
             default:
+              console.error('Unsupported field_type:', field.field_type);
               return null;
           }
         })}

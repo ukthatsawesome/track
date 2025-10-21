@@ -76,6 +76,24 @@ def _clean_form_data(form_instance, submitted_data):
                         raise ValidationError(f"Field '{field_name}' must be at least {rules['min_value']}.")
                     if 'max_value' in rules and field_value > rules['max_value']:
                         raise ValidationError(f"Field '{field_name}' cannot exceed {rules['max_value']}.")
+
+            # Enforce choices for select/radio/checkbox
+            if field.field_type in ('select', 'radio'):
+                choices = (field.validation_rules or {}).get('choices', [])
+                if choices and field_value not in choices:
+                    raise ValidationError(
+                        f"Field '{field_name}' must be one of: {', '.join(choices)}."
+                    )
+            elif field.field_type == 'checkbox':
+                choices = (field.validation_rules or {}).get('choices', [])
+                if choices:
+                    selected = field_value if isinstance(field_value, list) else str(field_value).split(',')
+                    selected = [str(v).strip() for v in selected if str(v).strip()]
+                    invalid = [v for v in selected if v not in choices]
+                    if invalid:
+                        raise ValidationError(
+                            f"Field '{field_name}' has invalid choices: {', '.join(invalid)}."
+                        )
     return submitted_data
 
 
@@ -154,3 +172,39 @@ class BagAdminForm(forms.ModelForm):
 
         cleaned_data['form_data'] = _clean_form_data(form_instance, submitted_data)
         return cleaned_data
+
+# New: Admin form for FormField with a friendly choices editor
+class FormFieldAdminForm(forms.ModelForm):
+    choices_text = forms.CharField(
+        required=False,
+        help_text="Comma-separated choices for select, radio, and checkbox field types."
+    )
+
+    class Meta:
+        model = FormField
+        fields = ('name', 'description', 'field_type', 'required', 'choices_text')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        rules = self.instance.validation_rules or {}
+        choices = rules.get('choices', [])
+        if isinstance(choices, list) and choices:
+            self.fields['choices_text'].initial = ', '.join(str(c) for c in choices)
+
+    def clean(self):
+        cleaned = super().clean()
+        field_type = cleaned.get('field_type')
+        choices_text = cleaned.get('choices_text') or ''
+        rules = dict(self.instance.validation_rules or {})
+
+        if field_type in ('select', 'radio', 'checkbox'):
+            choices = [c.strip() for c in choices_text.split(',') if c.strip()]
+            if not choices:
+                raise ValidationError('Please provide at least one choice.')
+            # de-duplicate while preserving order
+            rules['choices'] = list(dict.fromkeys(choices))
+        else:
+            rules.pop('choices', None)
+
+        self.instance.validation_rules = rules
+        return cleaned

@@ -116,7 +116,8 @@ const FormEdit = ({
 /* ------------------------------------------------------------------ */
 /*  Main container                                                    */
 /* ------------------------------------------------------------------ */
-const FormDetails = () => {
+// FormDetails component
+function FormDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getForm, updateForm } = useFormAPI();
@@ -162,6 +163,35 @@ const FormDetails = () => {
 
   const fieldChange = useCallback((key, e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === 'choices') {
+      const arr = Array.isArray(value)
+        ? value.map(c => c.trim()).filter(Boolean)
+        : String(value).split(',').map(c => c.trim()).filter(Boolean);
+
+      const deduped = [];
+      const seen = new Set();
+      for (const c of arr) {
+        if (!seen.has(c)) {
+          seen.add(c);
+          deduped.push(c);
+        }
+      }
+
+      setEditable(prev => ({
+        ...prev,
+        fields: prev.fields.map(f =>
+          (f.form_field_id || f.temp_id) === key
+            ? {
+                ...f,
+                validation_rules: { ...(f.validation_rules || {}), choices: deduped }
+              }
+            : f
+        ),
+      }));
+      return;
+    }
+
     setEditable(prev => ({
       ...prev,
       fields: prev.fields.map(f =>
@@ -207,6 +237,10 @@ const FormDetails = () => {
       const k = f.form_field_id || f.temp_id;
       if (!f.name?.trim()) errs[`fieldName_${k}`] = 'Field Name is required';
       if (!f.field_type?.trim()) errs[`fieldType_${k}`] = 'Field Type is required';
+      if (['select', 'radio', 'checkbox'].includes(f.field_type)) {
+        const choices = f.validation_rules?.choices || [];
+        if (!choices.length) errs[`fieldChoices_${k}`] = 'Please provide at least one choice.';
+      }
     });
 
     setEditErrors(errs);

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Batch, Bag, Form, FormField, Submission
-from .forms import SubmissionAdminForm, BatchAdminForm, BagAdminForm
+from .forms import SubmissionAdminForm, BatchAdminForm, BagAdminForm, FormFieldAdminForm
 
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
@@ -26,6 +26,9 @@ class BagAdmin(admin.ModelAdmin):
 
 class FormFieldInline(admin.TabularInline):
     model = FormField
+    form = FormFieldAdminForm
+    fields = ('name', 'description', 'field_type', 'required', 'choices_text')
+    exclude = ()  # keep explicit, but we hide raw JSON by not including it
     extra = 1 # Number of empty forms to display
 
 @admin.register(Form)

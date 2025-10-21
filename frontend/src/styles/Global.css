@@ -203,3 +203,213 @@ label {
   h2 { font-size: 1.25rem; }
   .container { padding: 1rem; }
 }
+
+/* Chip input styles */
+/* Keep styles minimal and reusable */
+.chip-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.chip {
+  background: #e5e7eb; /* gray-200 */
+  color: #374151;       /* gray-700 */
+  border-radius: 9999px;
+  padding: 0.25rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chip-remove {
+  background: transparent;
+  border: none;
+  color: #6b7280; /* gray-500 */
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+}
+.chip-remove:hover {
+  color: #ef4444; /* red-500 */
+}
+.chip-editor {
+  display: flex;
+  gap: 0.5rem;
+}
+.hint {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+}
+
+/* Theme variables */
+:root {
+  --bg: #F5F3EE;          /* Background: Cream Beige */
+  --surface: #FFFFFF;     /* Surface: White */
+  --text: #3E3E3E;        /* Text: Dark Brown */
+  --accent: #E07A5F;      /* Accent: Terracotta */
+  --secondary: #81B29A;   /* Secondary: Soft Olive */
+
+  /* Support tones derived for borders and muted elements */
+  --border: #E2DED5;      /* Soft border against Cream Beige */
+  --muted: #6B6B6B;       /* Muted text */
+}
+
+/* Base */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Cards */
+.batch-list-item,
+.bag-list-item,
+.form-list-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .2s ease;
+}
+.batch-list-item:hover,
+.bag-list-item:hover,
+.form-list-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border-color: var(--secondary);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .5rem;
+}
+.card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+.card-body p {
+  margin: 0.2rem 0;
+  color: var(--muted);
+}
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .75rem;
+  flex-wrap: wrap;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.status-draft {
+  color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 15%, white);
+  border-color: color-mix(in srgb, var(--secondary) 40%, white);
+}
+.status-working {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  border-color: color-mix(in srgb, var(--accent) 35%, white);
+}
+.status-completed {
+  color: var(--text);
+  background: color-mix(in srgb, var(--secondary) 20%, white);
+  border-color: color-mix(in srgb, var(--secondary) 45%, white);
+}
+
+/* Association badges for forms */
+.status-standalone {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, white);
+  border-color: color-mix(in srgb, var(--accent) 35%, white);
+}
+.status-batch {
+  color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 10%, white);
+  border-color: color-mix(in srgb, var(--secondary) 35%, white);
+}
+.status-bag {
+  color: var(--text);
+  background: color-mix(in srgb, var(--secondary) 15%, white);
+  border-color: color-mix(in srgb, var(--secondary) 40%, white);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .5rem .8rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, transform .12s ease, box-shadow .12s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--surface);
+  border-color: color-mix(in srgb, var(--accent) 60%, black);
+}
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--accent) 85%, black);
+}
+.btn-secondary {
+  background: color-mix(in srgb, var(--secondary) 12%, white);
+  color: var(--text);
+  border-color: var(--secondary);
+}
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--secondary) 20%, white);
+}
+
+/* Inputs */
+.status-select,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: .45rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: .9rem;
+  background: var(--surface);
+  color: var(--text);
+}
+.status-select.error,
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* Focus styles */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  outline: none;
+}

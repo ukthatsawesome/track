@@ -4,6 +4,7 @@ import { useFormAPI } from '../api/forms';
 import '../styles/FormPage.css';
 import FormField from '../components/FormField';
 
+// FormPage component
 const FormPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -44,11 +45,33 @@ const FormPage = () => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      fields: prev.fields.map(field => 
-        field.id === fieldId
-          ? { ...field, [name]: type === 'checkbox' ? checked : value } 
-          : field
-      )
+      fields: prev.fields.map(field => {
+        if (field.id !== fieldId) return field;
+    
+        if (name === 'choices') {
+          // Accept either an array (from chip editor) or a string (fallback)
+          const arr = Array.isArray(value)
+            ? value.map(c => c.trim()).filter(Boolean)
+            : String(value).split(',').map(c => c.trim()).filter(Boolean);
+    
+          // De-duplicate while preserving order
+          const deduped = [];
+          const seen = new Set();
+          for (const c of arr) {
+            if (!seen.has(c)) {
+              seen.add(c);
+              deduped.push(c);
+            }
+          }
+    
+          return {
+            ...field,
+            validation_rules: { ...(field.validation_rules || {}), choices: deduped },
+          };
+        }
+    
+        return { ...field, [name]: type === 'checkbox' ? checked : value };
+      })
     }));
   };
 
@@ -74,15 +97,21 @@ const FormPage = () => {
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.association_type.trim()) newErrors.association_type = 'Association Type is required';
 
-    formData.fields.forEach((field, index) => {
+    formData.fields.forEach((field) => {
       if (!field.name.trim()) {
         newErrors[`fieldName_${field.id}`] = 'Field name is required.';
       }
       if (!field.field_type.trim()) {
         newErrors[`fieldType_${field.id}`] = 'Field type is required.';
       }
+      if (['select', 'radio', 'checkbox'].includes(field.field_type)) {
+        const choices = field.validation_rules?.choices || [];
+        if (!choices.length) {
+          newErrors[`fieldChoices_${field.id}`] = 'Please provide at least one choice.';
+        }
+      }
     });
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

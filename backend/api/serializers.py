@@ -33,6 +33,29 @@ class BatchSerializer(serializers.ModelSerializer):
                 if field.required and field.name not in submitted_data_keys:
                     raise serializers.ValidationError(f"Required field '{field.name}' is missing from form_data.")
 
+            # Enforce choices for select/radio/checkbox
+            for field in form.fields.all():
+                field_name = field.name
+                field_value = form_data.get(field_name)
+
+                if field_value is not None:
+                    if field.field_type in ('select', 'radio'):
+                        choices = (field.validation_rules or {}).get('choices', [])
+                        if choices and field_value not in choices:
+                            raise serializers.ValidationError(
+                                f"Field '{field_name}' must be one of: {', '.join(choices)}."
+                            )
+                    elif field.field_type == 'checkbox':
+                        choices = (field.validation_rules or {}).get('choices', [])
+                        if choices:
+                            selected = field_value if isinstance(field_value, list) else str(field_value).split(',')
+                            selected = [str(v).strip() for v in selected if str(v).strip()]
+                            invalid = [v for v in selected if v not in choices]
+                            if invalid:
+                                raise serializers.ValidationError(
+                                    f"Field '{field_name}' has invalid choices: {', '.join(invalid)}."
+                                )
+
         return data
 
     def create(self, validated_data):
@@ -72,6 +95,29 @@ class BagSerializer(serializers.ModelSerializer):
                 if field.required and field.name not in submitted_data_keys:
                     raise serializers.ValidationError(f"Required field '{field.name}' is missing from form_data.")
 
+            # Enforce choices for select/radio/checkbox
+            for field in form.fields.all():
+                field_name = field.name
+                field_value = form_data.get(field_name)
+
+                if field_value is not None:
+                    if field.field_type in ('select', 'radio'):
+                        choices = (field.validation_rules or {}).get('choices', [])
+                        if choices and field_value not in choices:
+                            raise serializers.ValidationError(
+                                f"Field '{field_name}' must be one of: {', '.join(choices)}."
+                            )
+                    elif field.field_type == 'checkbox':
+                        choices = (field.validation_rules or {}).get('choices', [])
+                        if choices:
+                            selected = field_value if isinstance(field_value, list) else str(field_value).split(',')
+                            selected = [str(v).strip() for v in selected if str(v).strip()]
+                            invalid = [v for v in selected if v not in choices]
+                            if invalid:
+                                raise serializers.ValidationError(
+                                    f"Field '{field_name}' has invalid choices: {', '.join(invalid)}."
+                                )
+
         return data
 
     def to_representation(self, instance):
@@ -95,6 +141,21 @@ class FormFieldSerializer(serializers.ModelSerializer):
             print(f"FormFieldSerializer errors: {self.errors}")
             return False
         return True
+
+    def validate(self, attrs):
+        field_type = attrs.get('field_type', getattr(self.instance, 'field_type', None))
+        rules = attrs.get('validation_rules', getattr(self.instance, 'validation_rules', None)) or {}
+        if field_type in ('select', 'radio', 'checkbox'):
+            choices = rules.get('choices', [])
+            if not isinstance(choices, list) or not choices:
+                raise serializers.ValidationError({'validation_rules': 'choices are required for select/radio/checkbox fields.'})
+            cleaned = [str(c).strip() for c in choices if str(c).strip()]
+            if not cleaned:
+                raise serializers.ValidationError({'validation_rules': 'choices cannot be empty.'})
+            # de-duplicate while preserving order
+            rules['choices'] = list(dict.fromkeys(cleaned))
+            attrs['validation_rules'] = rules
+        return attrs
 
 class FormSerializer(serializers.ModelSerializer):
     fields = FormFieldSerializer(many=True)
@@ -129,13 +190,22 @@ class FormSerializer(serializers.ModelSerializer):
 
         for field_data in fields_data:
             field_id = field_data.pop('id', None)
-            if field_id:  # Update existing field
-                instance.fields.filter(form_field_id=field_id).update(**field_data)
+            if field_id:  # Update existing field via model save to trigger validation
+                field_obj = instance.fields.get(form_field_id=field_id)
+                field_serializer = FormFieldSerializer(instance=field_obj, data=field_data)
+                field_serializer.is_valid(raise_exception=True)
+                for k, v in field_serializer.validated_data.items():
+                    setattr(field_obj, k, v)
+                field_obj.full_clean()
+                field_obj.save()
             else:  # Create new field
-                FormField.objects.create(form=instance, **field_data)
+                field_serializer = FormFieldSerializer(data=field_data)
+                field_serializer.is_valid(raise_exception=True)
+                FormField.objects.create(form=instance, **field_serializer.validated_data)
         
         return instance
 
+# SubmissionSerializer class
 class SubmissionSerializer(serializers.ModelSerializer):
     created_by = serializers.StringRelatedField(read_only=True)
     content_object_url = serializers.HyperlinkedRelatedField(
@@ -237,6 +307,23 @@ class SubmissionSerializer(serializers.ModelSerializer):
                         if 'max_value' in rules and field_value > rules['max_value']:
                             raise serializers.ValidationError(f"Field '{field_name}' cannot exceed {rules['max_value']}.")
                     # Add more field type specific validations as needed
+            # Enforce choices for select/radio/checkbox
+            if field.field_type in ('select', 'radio'):
+                choices = (field.validation_rules or {}).get('choices', [])
+                if choices and field_value not in choices:
+                    raise serializers.ValidationError(
+                        f"Field '{field_name}' must be one of: {', '.join(choices)}."
+                    )
+            elif field.field_type == 'checkbox':
+                choices = (field.validation_rules or {}).get('choices', [])
+                if choices:
+                    selected = field_value if isinstance(field_value, list) else str(field_value).split(',')
+                    selected = [str(v).strip() for v in selected if str(v).strip()]
+                    invalid = [v for v in selected if v not in choices]
+                    if invalid:
+                        raise serializers.ValidationError(
+                            f"Field '{field_name}' has invalid choices: {', '.join(invalid)}."
+                        )
         return data
 
     def create(self, validated_data):

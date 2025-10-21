@@ -7,30 +7,45 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Create Context
 const AuthContext = createContext();
 
+// AuthProvider component
 export const AuthProvider = ({ children }) => {
   // --- State ---
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [remember, setRemember] = useState(false);
 
-  // --- Load from localStorage once on mount ---
+  // --- Load from storage once on mount ---
   useEffect(() => {
-    const loadUserFromStorage = () => {
-      const storedAccessToken = localStorage.getItem('accessToken');
-      const storedRefreshToken = localStorage.getItem('refreshToken');
-      const storedUser = localStorage.getItem('user');
+    const rememberStored = localStorage.getItem('rememberMe') === 'true';
+    setRemember(rememberStored);
+    const storage = rememberStored ? localStorage : sessionStorage;
 
-      if (storedAccessToken && storedRefreshToken && storedUser) {
+    const storedAccessToken = storage.getItem('accessToken');
+    const storedRefreshToken = storage.getItem('refreshToken');
+    const storedUser = storage.getItem('user');
+
+    const hydrate = async () => {
+      if (storedAccessToken && storedRefreshToken) {
         setAccessToken(storedAccessToken);
         setRefreshToken(storedRefreshToken);
-        setUser(JSON.parse(storedUser));
+
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          try {
+            await fetchUser(storedAccessToken, storage);
+          } catch (err) {
+            console.error('Auto-fetch user failed', err);
+          }
+        }
       }
       setLoading(false);
     };
 
-    loadUserFromStorage();
-  }, []);
+    hydrate();
+  }, []); // <-- remove fetchUser from deps to avoid TDZ
 
   // --- Helper: Auth headers ---
   const getAuthHeaders = useCallback(() => {
@@ -39,17 +54,17 @@ export const AuthProvider = ({ children }) => {
 
   // --- Fetch logged-in user info ---
   const fetchUser = useCallback(
-    async (token) => {
+    async (token, storage) => {
       try {
         const response = await axiosInstance.get('/me/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
+        storage.setItem('user', JSON.stringify(response.data));
       } catch (err) {
         console.error('Fetching user failed', err);
         setUser(null);
-        localStorage.removeItem('user');
+        storage.removeItem('user');
       }
     },
     []
@@ -57,17 +72,29 @@ export const AuthProvider = ({ children }) => {
 
   // --- Login ---
   const login = useCallback(
-    async (username, password) => {
+    async (username, password, rememberParam = false) => {
       try {
         const response = await axiosInstance.post('/token/', { username, password });
         const { access, refresh } = response.data;
 
         setAccessToken(access);
         setRefreshToken(refresh);
-        localStorage.setItem('accessToken', access);
-        localStorage.setItem('refreshToken', refresh);
+        setRemember(rememberParam);
 
-        await fetchUser(access);
+        const storage = rememberParam ? localStorage : sessionStorage;
+        storage.setItem('accessToken', access);
+        storage.setItem('refreshToken', refresh);
+
+        // Ensure the other storage is clean
+        const otherStorage = rememberParam ? sessionStorage : localStorage;
+        otherStorage.removeItem('accessToken');
+        otherStorage.removeItem('refreshToken');
+        otherStorage.removeItem('user');
+
+        // Persist the remember preference
+        localStorage.setItem('rememberMe', rememberParam ? 'true' : 'false');
+
+        await fetchUser(access, storage);
         return true;
       } catch (err) {
         console.error('Login failed', err);
@@ -82,9 +109,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
+    // Clear both storages to avoid stale data
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('user');
   }, []);
 
   // --- Refresh access token ---
@@ -95,14 +126,20 @@ export const AuthProvider = ({ children }) => {
       });
       const { access } = response.data;
       setAccessToken(access);
-      localStorage.setItem('accessToken', access);
+      const storage = remember ? localStorage : sessionStorage;
+      storage.setItem('accessToken', access);
       return access;
     } catch (err) {
-      console.error('Token refresh failed', err);
-      logout();
+      const status = err.response?.status;
+      if (status === 401 || status === 403) {
+        console.error('Token refresh failed (invalid/expired)', err);
+        logout();
+      } else {
+        console.warn('Token refresh failed (network/server). Session preserved.', err);
+      }
       throw err;
     }
-  }, [refreshToken, logout]);
+  }, [refreshToken, logout, remember]);
 
   // --- Setup Axios Instance (only once) ---
   const axiosInstance = axios.create({ baseURL: API_URL });
@@ -142,6 +179,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     getAuthHeaders,
     loading,
+    refreshAccessToken, // <-- expose refreshAccessToken to consumers
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

@@ -135,6 +135,18 @@ class FormField(models.Model):
     def __str__(self):
         return f"FormField {self.form_field_id} - {self.name}"
 
+    def clean(self):
+        if self.field_type in ('select', 'radio', 'checkbox'):
+            rules = self.validation_rules or {}
+            choices = rules.get('choices')
+            if not isinstance(choices, list) or not choices:
+                raise ValidationError('Choices are required for select, radio, and checkbox fields.')
+            cleaned = [str(c).strip() for c in choices if str(c).strip()]
+            if not cleaned:
+                raise ValidationError('Choices cannot be empty.')
+            # de-duplicate while preserving order
+            self.validation_rules = {**rules, 'choices': list(dict.fromkeys(cleaned))}
+
 class Submission(models.Model):
     submission_id = models.AutoField(primary_key=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)

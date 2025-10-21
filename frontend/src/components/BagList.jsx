@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useBagAPI } from '../api/bags';
-import { useBatchAPI } from '../api/batches'; // Import useBatchAPI
+import { useBatchAPI } from '../api/batches';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
-import SortFilter from './SortFilter'; // Import SortFilter component
-import SearchFilter from './SearchFilter'; // Import SearchFilter component
+import SortFilter, { sortData } from './SortFilter';
+import SearchFilter from './SearchFilter';
 import '../styles/BagList.css';
-import { sortData } from './SortFilter'; // Import the utility
+import { useAuth } from '../context/AuthContext';
 
 function BagList() {
   const [bags, setBags] = useState([]);
@@ -15,9 +14,13 @@ function BagList() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { getBags } = useBagAPI();
-  const { getBatch } = useBatchAPI(); // Get getBatch from useBatchAPI
-  const { loading: authLoading } = useAuth(); // Get auth loading state
+  const { getBags, partialUpdateBag } = useBagAPI();
+  const { getBatch } = useBatchAPI(); // Get getBatch from useFormAPI
+  const { loading: authLoading, user } = useAuth(); // Get auth loading state and user
+
+  // Local state to track per-item status updates and errors
+  const [updatingStatus, setUpdatingStatus] = useState({});
+  const [statusErrors, setStatusErrors] = useState({});
 
   useEffect(() => {
     const fetchBags = async () => {
@@ -69,13 +72,70 @@ function BagList() {
     return <p>Error: {error.message}</p>;
   }
 
+  const STATUS_OPTIONS = [
+    { value: 'draft', label: 'Draft' },
+    { value: 'working', label: 'Pending' },
+    { value: 'completed', label: 'Completed' },
+  ];
+
+  const StatusBadge = ({ value }) => {
+    const cls =
+      value === 'completed'
+        ? 'status-completed'
+        : value === 'working'
+        ? 'status-working'
+        : 'status-draft';
+    const label = value === 'working' ? 'Pending' : (value || '').replace(/^\w/, c => c.toUpperCase());
+    return <span className={`status-badge ${cls}`}>{label}</span>;
+  };
+
+  const canEditStatus = (item) => {
+    // Lock when completed unless admin; admins can always edit
+    if (user?.is_staff) return true;
+    return item.status !== 'completed';
+  };
+
+  const handleStatusChange = async (bagId, nextStatus) => {
+    // Optimistic update with revert on error
+    setUpdatingStatus(prev => ({ ...prev, [bagId]: true }));
+    setStatusErrors(prev => ({ ...prev, [bagId]: '' }));
+
+    const prevBags = bags;
+    const nextBags = bags.map(b => b.bag_id === bagId ? { ...b, status: nextStatus } : b);
+    setBags(nextBags);
+
+    try {
+      await partialUpdateBag(bagId, { status: nextStatus });
+    } catch (e) {
+      console.error('Failed to update bag status:', e);
+      setBags(prevBags);
+      setStatusErrors(prev => ({
+        ...prev,
+        [bagId]: e.response?.data?.detail || 'Failed to update status.'
+      }));
+    } finally {
+      setUpdatingStatus(prev => ({ ...prev, [bagId]: false }));
+    }
+  };
+
   return (
     <div className="bag-list-container">
-      <h2 className="bag-list-title">List of Bags</h2>
-      <div className="filter-sort-controls">
-        <SearchFilter searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Search bags..." />
-        <SortFilter sortConfig={sortConfig} onSortChange={setSortConfig} />
+      {/* Top header with title left, controls right */}
+      <div className="list-header">
+        <h2 className="bag-list-title">List of Bags</h2>
+        <div className="filter-sort-controls">
+          <SearchFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            placeholder="Search bags..."
+          />
+          <SortFilter
+            sortConfig={sortConfig}
+            onSortChange={setSortConfig}
+          />
+        </div>
       </div>
+
       {displayedBags.length === 0 ? (
         <p>No bags found. Create one to get started!</p>
       ) : (
@@ -83,16 +143,24 @@ function BagList() {
           {displayedBags.map(bag => (
             <li key={bag.bag_id} className="bag-list-item">
               <Link to={`/bags/${bag.bag_id}`}>
-                <h3>Bag ID: {bag.bag_id}</h3>
-                <p>Batch: {bag.batch_name}</p>
-                <p>Internal Lot Number: {bag.internal_lot_number}</p>
-                <p>Status: {bag.status}</p>
+                <div className="card-header">
+                  <h3>Bag ID: {bag.bag_id}</h3>
+                  <StatusBadge value={bag.status} />
+                </div>
+                <div className="card-body">
+                  <p>Batch: {bag.batch_name}</p>
+                  <p>Internal Lot Number: {bag.internal_lot_number}</p>
+                </div>
               </Link>
+
+              {/* Removed inline status editor; keep actions lightweight */}
+              <div className="card-actions">
+                <Link to={`/bags/${bag.bag_id}`} className="btn btn-secondary">View Details</Link>
+              </div>
             </li>
           ))}
         </ul>
-      )
-      }
+      )}
     </div>
   );
 }

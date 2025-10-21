@@ -76,18 +76,19 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  // handleSubmit function in Login component
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) {
       return;
     }
-    
+  
     setIsLoading(true);
     setLoginError('');
-    
+  
     try {
-      const success = await login(formData.username, formData.password);
+      const success = await login(formData.username, formData.password, rememberMe);
       
       if (success) {
         // Store remember me preference in localStorage

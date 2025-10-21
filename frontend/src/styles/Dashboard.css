@@ -1,21 +1,19 @@
 /* Dashboard.css */
-
 .dashboard-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8fafc; /* subtle background */
-  color: #1e293b;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Inter', sans-serif;
 }
 
-/* Header */
 .dashboard-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -25,7 +23,7 @@
 .dashboard-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text);
 }
 
 .user-info {
@@ -33,25 +31,24 @@
   align-items: center;
   gap: 1rem;
   font-size: 0.95rem;
-  color: #475569;
+  color: var(--muted);
 }
 
 .logout-button {
   padding: 0.4rem 0.9rem;
-  background: #ef4444;
+  background: var(--accent);
   border: none;
   border-radius: 6px;
-  color: #fff;
+  color: var(--surface);
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .logout-button:hover {
-  background: #dc2626;
+  background: color-mix(in srgb, var(--accent) 85%, black);
 }
 
-/* Content */
 .dashboard-content {
   flex: 1;
   padding: 2rem;
@@ -61,7 +58,7 @@
 }
 
 .welcome-card {
-  background: #fff;
+  background: var(--surface);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -72,14 +69,14 @@
 .welcome-card h2 {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
+  color: var(--text);
 }
 
 .welcome-card p {
   margin-bottom: 1.5rem;
-  color: #64748b;
+  color: var(--muted);
 }
 
-/* Feature grid */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -87,10 +84,10 @@
 }
 
 .feature-card {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: color-mix(in srgb, var(--secondary) 6%, white);
+  border: 1px solid var(--border);
+  padding: 1rem;
   border-radius: 10px;
-  padding: 1.5rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }

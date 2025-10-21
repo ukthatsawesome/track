@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 });
 
 export const useAxios = () => {
-  const { getAuthHeaders, refreshAccessToken, logout } = useAuth();
+  const { getAuthHeaders, refreshAccessToken, logout } = useAuth(); // ensure it's destructured
 
   const request = useCallback(
     async (config) => {
@@ -26,7 +26,6 @@ export const useAxios = () => {
         const response = await axiosInstance({ ...config, headers });
         return response.data;
       } catch (error) {
-        // 3️⃣ Handle expired token
         if (error.response?.status === 401 && !config._retry) {
           config._retry = true;
           try {
@@ -39,16 +38,17 @@ export const useAxios = () => {
             return retryResponse.data;
           } catch (refreshError) {
             console.error('Token refresh failed during request retry:', refreshError);
-            logout(); // Logout if refresh fails
+            const status = refreshError.response?.status;
+            if (status === 401 || status === 403) {
+              logout();
+            }
             throw refreshError;
           }
         }
-
-        // 4️⃣ Throw other errors
         throw error;
       }
     },
-    [getAuthHeaders, refreshAccessToken, logout] // stable dependencies
+    [getAuthHeaders, refreshAccessToken, logout]
   );
 
   return request;

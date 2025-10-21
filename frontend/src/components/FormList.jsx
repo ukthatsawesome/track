@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useFormAPI } from '../api/forms';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
-import SortFilter from './SortFilter'; // Import SortFilter component
-import SearchFilter from './SearchFilter'; // Import SearchFilter component
+import { useAuth } from '../context/AuthContext';
+import SortFilter from './SortFilter';
+import SearchFilter from './SearchFilter';
 import '../styles/FormList.css';
-import { sortData } from './SortFilter'; // Import the utility
+import { sortData } from './SortFilter';
 
 function FormList() {
   const [forms, setForms] = useState([]);
@@ -58,6 +58,16 @@ function FormList() {
     return <p>Error: {error.message}</p>;
   }
 
+  const AssocBadge = ({ type }) => {
+    const map = {
+      standalone: { cls: 'status-standalone', label: 'Standalone' },
+      batch: { cls: 'status-batch', label: 'Batch' },
+      bag: { cls: 'status-bag', label: 'Bag' },
+    };
+    const { cls, label } = map[type] || { cls: 'status-standalone', label: type || '—' };
+    return <span className={`status-badge ${cls}`}>{label}</span>;
+  };
+
   return (
     <div className="form-list-container">
       <h2 className="form-list-title">List of Forms</h2>
@@ -72,15 +82,28 @@ function FormList() {
           {displayedForms.map(form => (
             <li key={form.form_id} className="form-list-item">
               <Link to={`/forms/${form.form_id}`}>
-                <h3>Form Name: {form.name}</h3>
-                {/* <p>Form ID: {form.form_id</p> */}
-                <p>Description: {form.description}</p>
+                <div className="card-header">
+                  <h3>{form.name}</h3>
+                  <AssocBadge type={form.association_type} />
+                </div>
+                <div className="card-body">
+                  <p>{form.description}</p>
+                </div>
               </Link>
-              {form.association_type === 'standalone' && (
-                <Link to={`/submissions/${form.form_id}`} className="fill-form-button">
-                  Fill Form
-                </Link>
-              )}
+
+              <div className="card-actions">
+                <Link to={`/forms/${form.form_id}`} className="btn btn-secondary">View Details</Link>
+                {form.association_type === 'standalone' && (
+                  <>
+                    <Link to={`/submissions/${form.form_id}`} className="btn btn-primary">
+                      Fill Form
+                    </Link>
+                    <Link to={`/forms/${form.form_id}/submissions`} className="btn btn-secondary">
+                      View Submissions
+                    </Link>
+                  </>
+                )}
+              </div>
             </li>
           ))}
         </ul>
@@ -88,5 +111,4 @@ function FormList() {
     </div>
   );
 }
-
 export default FormList;

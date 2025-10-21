@@ -64,48 +64,56 @@
 }
 
 /* ----------  Inputs  ---------- */
+.form-container{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea{
   padding:.65rem .9rem;
-  border:1px solid var(--gray-3);
-  border-radius:var(--radius);
+  border:1px solid var(--border);
+  border-radius:8px;
   font-size:1rem;
   transition:border-color .2s, box-shadow .2s;
-  background:#fff;
+  background:var(--surface);
+  color:var(--text);
 }
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(59,130,246,.25);
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
   outline:none;
 }
 .form-group input:disabled,
 .form-group select:disabled,
 .form-group textarea:disabled{
-  background:var(--gray-0);
+  background:color-mix(in srgb, var(--surface) 85%, var(--bg));
   cursor:not-allowed;
   opacity:.65;
 }
 
-/* ----------  Error  ---------- */
 .form-group input.error,
 .form-group select.error,
 .form-group textarea.error{
-  border-color:var(--danger);
-  box-shadow:0 0 0 3px rgba(239,68,68,.2);
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .error-text{
-  color:var(--danger);
+  color:var(--accent);
   font-size:.8125rem;
   margin-top:.25rem;
 }
 .api-error-message{
-  background:#fee2e2;
-  color:#b91c1c;
+  background:color-mix(in srgb, var(--accent) 15%, white);
+  color:var(--accent);
   padding:.75rem 1rem;
-  border-radius:var(--radius);
+  border-radius:12px;
+  border:1px solid color-mix(in srgb, var(--accent) 35%, white);
   margin-bottom:1rem;
   text-align:center;
 }
