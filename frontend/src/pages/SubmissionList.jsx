@@ -13,8 +13,7 @@ const formatDate = (iso) => {
     return iso;
   }
 };
-
-// SubmissionList component
+
 const SubmissionList = () => {
   const { formId } = useParams();
   const navigate = useNavigate();
@@ -27,7 +26,7 @@ const SubmissionList = () => {
   const [apiError, setApiError] = useState('');
   const [search, setSearch] = useState('');
 
-  // Add formatter to avoid showing raw JSON
+ 
   const renderFieldValue = (field, value) => {
     if (value === undefined || value === null || value === '') return '—';
     const t = field.field_type;
@@ -84,7 +83,7 @@ const SubmissionList = () => {
       }
     })();
     return () => (mounted = false);
-  }, [formId]); // only depends on the param
+  }, [formId]);
 
   const filtered = useMemo(() => {
     if (!search) return submissions;

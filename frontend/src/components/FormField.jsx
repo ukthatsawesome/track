@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import '../styles/FormField.css';
 
 const FormField = ({ field, onFieldChange, onRemoveField, errors = {}, disabled = false }) => {
-    const key = field.id || field.form_field_id || field.temp_id; // stable key in your code
+    const key = field.id || field.form_field_id || field.temp_id;
     const isChoiceType = ['select', 'radio', 'checkbox'].includes(field.field_type);
 
-    // Chip editor local state
+   
     const [newChoice, setNewChoice] = useState('');
 
     const addChoice = () => {
@@ -30,7 +30,7 @@ const FormField = ({ field, onFieldChange, onRemoveField, errors = {}, disabled 
     const handlePasteChoices = (e) => {
         const text = e.clipboardData.getData('text');
         if (!text) return;
-        // If pasting a list, split by comma or newline and add all non-empty, non-duplicate
+       
         if (text.includes(',') || text.includes('\n')) {
             e.preventDefault();
             const tokens = text.split(/[,\n]/).map(s => s.trim()).filter(Boolean);

@@ -22,7 +22,7 @@
 .detail-item strong {
     color: #555;
     display: inline-block;
-    width: 150px; /* Adjust as needed for alignment */
+    width: 150px; 
 }
 
 .error-message,

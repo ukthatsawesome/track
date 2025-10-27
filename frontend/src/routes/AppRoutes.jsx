@@ -1,10 +1,9 @@
-// src/routes/AppRoutes.jsx
+
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Loading from '../components/Loading';
 
-// Pages
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import BatchPage from '../pages/BatchPage';
@@ -20,9 +19,6 @@ import FormDetails from '../pages/FormDetails';
 import Submissions from '../pages/Submissions';
 import SubmissionList from '../pages/SubmissionList';
 
-// ------------------------
-// Protected Route Wrapper
-// ------------------------
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -34,9 +30,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// ------------------------
-// Public Route Wrapper
-// ------------------------
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -48,13 +41,10 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// ------------------------
-// App Routes
-// ------------------------
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {}
       <Route
         path="/login"
         element={
@@ -64,7 +54,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Protected Routes */}
+      {}
       <Route
         path="/dashboard"
         element={
@@ -74,7 +64,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Batch Routes */}
+      {}
       <Route
         path="/batches/new"
         element={
@@ -100,7 +90,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Bag Routes */}
+      {}
       <Route
         path="/bags/new"
         element={
@@ -126,7 +116,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Form Routes */}
+      {}
       <Route
         path="/forms/new"
         element={
@@ -151,7 +141,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* Form Submission (fill) */}
+      {}
       <Route
         path="/submissions/:formId"
         element={
@@ -160,7 +150,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* Form Submissions (list) */}
+      {}
       <Route
         path="/forms/:formId/submissions"
         element={
@@ -169,7 +159,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* Reports */}
+      {}
       <Route
         path="/reports"
         element={
@@ -179,7 +169,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Default & Catch-all Redirect */}
+      {}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

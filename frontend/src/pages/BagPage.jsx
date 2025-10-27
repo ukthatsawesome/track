@@ -4,20 +4,15 @@ import { useBagAPI } from '../api/bags';
 import { useFormAPI } from '../api/forms';
 import '../styles/BagPage.css';
 
-/**
- * BagPage Component
- * ------------------
- * Handles creation of a new Bag and dynamic form fields linked to forms
- * associated with the "bag" type.
- */
+
 const BagPage = () => {
-  // ========== Hooks ==========
+ 
   const location = useLocation();
   const navigate = useNavigate();
   const { createBag } = useBagAPI();
   const { getForms } = useFormAPI();
 
-  // ========== States ==========
+ 
   const [formData, setFormData] = useState({
     batch: '',
     internal_lot_number: '',
@@ -35,9 +30,9 @@ const BagPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateAnotherPrompt, setShowCreateAnotherPrompt] = useState(false);
 
-  // ======================================================
-  // FETCH AVAILABLE BAG FORMS + QUERY PARAM HANDLING
-  // ======================================================
+ 
+ 
+ 
   useEffect(() => {
     let isMounted = true;
 
@@ -67,11 +62,11 @@ const BagPage = () => {
     };
   }, [getForms, location.search]);
 
-  // ======================================================
-  // HANDLERS
-  // ======================================================
+ 
+ 
+ 
 
-  /** Handle dynamic form field changes */
+  
   const handleChangeDynamicField = useCallback((fieldId, value) => {
     setFormData(prev => ({
       ...prev,
@@ -82,7 +77,7 @@ const BagPage = () => {
     }));
   }, []);
 
-  /** Handle static input changes */
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -96,7 +91,7 @@ const BagPage = () => {
     setApiError('');
   };
 
-  /** Form validation */
+  
   const validateForm = () => {
     const newErrors = {};
     const requiredFields = [
@@ -129,7 +124,7 @@ const BagPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  /** Reset form for creating another bag */
+  
   const handleCreateAnotherBag = () => {
     setFormData(prev => ({
       ...prev,
@@ -145,10 +140,10 @@ const BagPage = () => {
     setApiError('');
   };
 
-  /** Navigate to batch list */
+  
   const handleGoToBatchesList = () => navigate('/batches');
 
-  /** Handle form submit */
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -186,9 +181,9 @@ const BagPage = () => {
     }
   };
 
-  // ======================================================
-  // RENDER HELPERS
-  // ======================================================
+ 
+ 
+ 
 
   const renderTextField = (field) => (
     <div className="form-group" key={field}>
@@ -353,9 +348,9 @@ const BagPage = () => {
     );
   };
 
-  // ======================================================
-  // RENDER
-  // ======================================================
+ 
+ 
+ 
   return (
     <div className="bag-page-container">
       <div className="bag-card">
@@ -363,10 +358,10 @@ const BagPage = () => {
         {apiError && <div className="error-message">{apiError}</div>}
 
         <form onSubmit={handleSubmit} className="bag-form">
-          {/* Basic Fields */}
+          {}
           {['batch', 'internal_lot_number', 'state', 'qr_code', 'external_lot_number'].map(renderTextField)}
 
-          {/* Date Input */}
+          {}
           <div className="form-group">
             <label htmlFor="external_update_date">External Update Date</label>
             <input
@@ -383,7 +378,7 @@ const BagPage = () => {
             )}
           </div>
 
-          {/* Form Selector */}
+          {}
           <div className="form-group">
             <label htmlFor="selectedForm">Select Associated Form:</label>
             <select
@@ -402,7 +397,7 @@ const BagPage = () => {
             </select>
           </div>
 
-          {/* Dynamic Form Fields */}
+          {}
           {formData.selectedForm && renderDynamicFields()}
 
           {apiError && <div className="error-message">{apiError}</div>}

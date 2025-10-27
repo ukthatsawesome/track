@@ -3,25 +3,20 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 import re
 from datetime import datetime
-
 from .models import Submission, Form, FormField, Batch, Bag
+
 
 def _clean_form_data(form_instance, submitted_data):
     if not submitted_data:
         return submitted_data
 
     if not form_instance:
-        # If no form is selected, and there is submitted data,
-        # we assume no validation against form fields is required.
-        # This is for cases where the form is not mandatory (e.g., Batch, Bag).
         return submitted_data
 
-    # Validate submitted data against form fields
     form_field_names = {field.name for field in form_instance.fields.all()}
     submitted_data_keys = set(submitted_data.keys())
-
-    # Check for extra fields in submitted data
     extra_fields = submitted_data_keys - form_field_names
+
     if extra_fields:
         raise ValidationError(f"Unexpected fields in form data: {', '.join(extra_fields)}.")
 
@@ -33,7 +28,6 @@ def _clean_form_data(form_instance, submitted_data):
             raise ValidationError(f"Field '{field_name}' is required.")
 
         if field_value is not None:
-            # Basic type validation
             if field.field_type == 'number':
                 try:
                     float(field_value)
@@ -51,17 +45,16 @@ def _clean_form_data(form_instance, submitted_data):
                 from django.core.validators import validate_email
                 try:
                     validate_email(field_value)
-                except ValidationError: # type: ignore
+                except ValidationError:
                     raise ValidationError(f"Field '{field.name}' must be a valid email address.")
             elif field.field_type == 'url':
                 from django.core.validators import URLValidator
                 validate = URLValidator()
                 try:
                     validate(field_value)
-                except ValidationError: # type: ignore
+                except ValidationError:
                     raise ValidationError(f"Field '{field.name}' must be a valid URL.")
 
-            # Validation rules from FormField
             if field.validation_rules:
                 rules = field.validation_rules
                 if field.field_type == 'text':
@@ -77,13 +70,10 @@ def _clean_form_data(form_instance, submitted_data):
                     if 'max_value' in rules and field_value > rules['max_value']:
                         raise ValidationError(f"Field '{field_name}' cannot exceed {rules['max_value']}.")
 
-            # Enforce choices for select/radio/checkbox
             if field.field_type in ('select', 'radio'):
                 choices = (field.validation_rules or {}).get('choices', [])
                 if choices and field_value not in choices:
-                    raise ValidationError(
-                        f"Field '{field_name}' must be one of: {', '.join(choices)}."
-                    )
+                    raise ValidationError(f"Field '{field_name}' must be one of: {', '.join(choices)}.")
             elif field.field_type == 'checkbox':
                 choices = (field.validation_rules or {}).get('choices', [])
                 if choices:
@@ -91,9 +81,7 @@ def _clean_form_data(form_instance, submitted_data):
                     selected = [str(v).strip() for v in selected if str(v).strip()]
                     invalid = [v for v in selected if v not in choices]
                     if invalid:
-                        raise ValidationError(
-                            f"Field '{field_name}' has invalid choices: {', '.join(invalid)}."
-                        )
+                        raise ValidationError(f"Field '{field_name}' has invalid choices: {', '.join(invalid)}.")
     return submitted_data
 
 
@@ -116,23 +104,19 @@ class SubmissionAdminForm(forms.ModelForm):
         if not form_instance:
             raise ValidationError("Form is required.")
 
-        # Validate content_type and object_id for non-standalone forms
         if form_instance.association_type != 'standalone':
             if not content_type or not object_id:
                 raise ValidationError("Content type and object ID are required for non-standalone forms.")
-            
             model_class = content_type.model_class()
             if not model_class:
                 raise ValidationError("Invalid content type.")
-            
             try:
                 obj = model_class.objects.get(pk=object_id)
             except model_class.DoesNotExist:
                 raise ValidationError(f"No {model_class.__name__} found with ID {object_id}.")
-
             if not form_instance.can_associate_with(model_class.__name__):
                 raise ValidationError(
-                    f'Form association type "{form_instance.association_type}" does not match ' 
+                    f'Form association type "{form_instance.association_type}" does not match '
                     f'the associated object type "{model_class.__name__.lower()}".'
                 )
         else:
@@ -145,18 +129,21 @@ class SubmissionAdminForm(forms.ModelForm):
         cleaned_data['data'] = _clean_form_data(form_instance, submitted_data)
         return cleaned_data
 
+
 class BatchAdminForm(forms.ModelForm):
     form_data = forms.JSONField(widget=forms.Textarea, required=False)
+
     class Meta:
         model = Batch
         fields = '__all__'
+
     def clean(self):
         cleaned_data = super().clean()
         form_instance = cleaned_data.get('form')
         submitted_data = cleaned_data.get('form_data')
-
         cleaned_data['form_data'] = _clean_form_data(form_instance, submitted_data)
         return cleaned_data
+
 
 class BagAdminForm(forms.ModelForm):
     form_data = forms.JSONField(widget=forms.Textarea, required=False)
@@ -169,16 +156,12 @@ class BagAdminForm(forms.ModelForm):
         cleaned_data = super().clean()
         form_instance = cleaned_data.get('form')
         submitted_data = cleaned_data.get('form_data')
-
         cleaned_data['form_data'] = _clean_form_data(form_instance, submitted_data)
         return cleaned_data
 
-# New: Admin form for FormField with a friendly choices editor
+
 class FormFieldAdminForm(forms.ModelForm):
-    choices_text = forms.CharField(
-        required=False,
-        help_text="Comma-separated choices for select, radio, and checkbox field types."
-    )
+    choices_text = forms.CharField(required=False)
 
     class Meta:
         model = FormField
@@ -201,7 +184,6 @@ class FormFieldAdminForm(forms.ModelForm):
             choices = [c.strip() for c in choices_text.split(',') if c.strip()]
             if not choices:
                 raise ValidationError('Please provide at least one choice.')
-            # de-duplicate while preserving order
             rules['choices'] = list(dict.fromkeys(choices))
         else:
             rules.pop('choices', None)

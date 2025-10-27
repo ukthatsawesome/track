@@ -5,9 +5,9 @@ import Loading from '../components/Loading';
 import '../styles/FormDetails.css';
 import FormField from '../components/FormField';
 
-/* ------------------------------------------------------------------ */
-/*  Stateless UI components                                           */
-/* ------------------------------------------------------------------ */
+
+
+
 const FormView = ({ form, onEdit }) => (
   <div className="form-view-mode">
     <div className="detail-item"><strong>Form ID:</strong> {form.form_id}</div>
@@ -113,18 +113,17 @@ const FormEdit = ({
   </div>
 );
 
-/* ------------------------------------------------------------------ */
-/*  Main container                                                    */
-/* ------------------------------------------------------------------ */
-// FormDetails component
+
+
+
 function FormDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getForm, updateForm } = useFormAPI();
 
-  /* ---------------  local state  ---------------- */
-  const [form, setForm] = useState(null); // canonical copy from server
-  const [editable, setEditable] = useState(null); // working copy while editing
+  
+  const [form, setForm] = useState(null);
+  const [editable, setEditable] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -134,7 +133,7 @@ function FormDetails() {
 
   const tempIdCounter = useRef(0);
 
-  /* ---------------  data fetching  -------------- */
+  
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -153,7 +152,7 @@ function FormDetails() {
     return () => (mounted = false);
   }, [id]);
 
-  /* ---------------  helpers  -------------------- */
+  
   const copy = (o) => JSON.parse(JSON.stringify(o));
 
   const headerChange = useCallback(e => {
@@ -227,7 +226,7 @@ function FormDetails() {
     }));
   }, []);
 
-  /* ---------------  validation  ----------------- */
+  
   const validate = () => {
     const errs = {};
     if (!editable.name?.trim()) errs.name = 'Form Name is required';
@@ -247,7 +246,7 @@ function FormDetails() {
     return Object.keys(errs).length === 0;
   };
 
-  /* ---------------  save  ----------------------- */
+  
   const handleSave = async () => {
     if (!validate()) return;
 
@@ -258,7 +257,7 @@ function FormDetails() {
       const payload = {
         ...editable,
         fields: editable.fields?.map(f => ({
-          // send `id` only for existing fields so the server updates them
+         
           ...(f.form_field_id && { id: f.form_field_id }),
           name: f.name,
           description: f.description || '',
@@ -268,8 +267,8 @@ function FormDetails() {
         })),
       };
 
-      // The backend's update operation now returns the final, canonical state of the form.
-      // We use this response directly to update our state, avoiding a second API call.
+     
+     
       const updated = await updateForm(id, payload);
       setForm(updated);
       setEditable(copy(updated));
@@ -281,7 +280,7 @@ function FormDetails() {
     }
   };
 
-  /* ---------------  edit / cancel  -------------- */
+  
   const startEdit = () => {
     setEditable(copy(form));
     tempIdCounter.current = 0;
@@ -297,7 +296,7 @@ function FormDetails() {
     setIsEditing(false);
   };
 
-  /* ---------------  render  --------------------- */
+  
   if (loading) return <Loading />;
   if (error) return <div className="error-message">{error}</div>;
   if (!form) return <div className="no-data-message">No form data found.</div>;

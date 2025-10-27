@@ -1,4 +1,4 @@
-// src/api/bags.js
+
 import { useCallback } from 'react';
 import { useAxios } from './index';
 

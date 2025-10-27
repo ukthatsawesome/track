@@ -1,4 +1,4 @@
-// BagDetails component imports
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useBagAPI } from '../api/bags';
@@ -23,7 +23,7 @@ function BagDetails() {
   const { getBatch } = useBatchAPI();
   const [batch, setBatch] = useState(null);
 
-  // ✅ Fetch bag, related form, and associated batch
+ 
   useEffect(() => {
     const fetchBagDetails = async () => {
       try {
@@ -35,12 +35,12 @@ function BagDetails() {
           setFormName(form.name);
         }
 
-        // Fetch associated batch and apply rules
+       
         if (data.batch) {
           const batchData = await getBatch(data.batch);
           setBatch(batchData);
 
-          // If batch is completed, enforce bag status completed and lock it
+         
           if (batchData.status === 'completed' && data.status !== 'completed') {
             setBag(prev => ({ ...prev, status: 'completed' }));
             try {
@@ -61,7 +61,7 @@ function BagDetails() {
     fetchBagDetails();
   }, [id, getBag, getForm, getBatch, partialUpdateBag]);
 
-  // ✅ Combine role-based permission with batch rule
+ 
   const canEditStatus = (bagToCheck) => {
     if (!user) return false;
     const roleAllowed = user.role === 'admin' || user.id === bagToCheck.created_by;
@@ -69,7 +69,7 @@ function BagDetails() {
     return roleAllowed && batchAllows;
   };
 
-  // ✅ Handle status change
+ 
   const handleStatusChange = async (nextStatus) => {
     if (!bag) return;
     setUpdatingStatus(true);
@@ -89,12 +89,12 @@ function BagDetails() {
     }
   };
 
-  // ✅ Loading & Error UI
+ 
   if (loading) return <Loading />;
   if (error) return <div className="error-message">{error}</div>;
   if (!bag) return <div className="no-data-message">No bag data found.</div>;
 
-  // ✅ Main UI
+ 
   return (
     <div className="bag-details-container">
       <h2>Bag Details</h2>

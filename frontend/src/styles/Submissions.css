@@ -1,25 +1,25 @@
-/* ----------  Google Font  ---------- */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-/* ----------  CSS Variables  ---------- */
+
 :root{
-  --primary: #3b82f6;            /* blue-500 */
-  --primary-dark: #2563eb;       /* blue-600 */
-  --danger: #ef4444;             /* red-500 */
-  --gray-0: #f9fafb;             /* gray-50 */
-  --gray-1: #f3f4f6;             /* gray-100 */
-  --gray-2: #e5e7eb;             /* gray-200 */
-  --gray-3: #d1d5db;             /* gray-300 */
-  --gray-4: #9ca3af;             /* gray-400 */
-  --gray-6: #4b5563;             /* gray-600 */
-  --gray-7: #374151;             /* gray-700 */
-  --gray-9: #111827;             /* gray-900 */
+  --primary: #3b82f6;            
+  --primary-dark: #2563eb;       
+  --danger: #ef4444;             
+  --gray-0: #f9fafb;             
+  --gray-1: #f3f4f6;             
+  --gray-2: #e5e7eb;             
+  --gray-3: #d1d5db;             
+  --gray-4: #9ca3af;             
+  --gray-6: #4b5563;             
+  --gray-7: #374151;             
+  --gray-9: #111827;             
   --radius: 8px;
   --shadow: 0 4px 12px rgba(0,0,0,.08);
   --max-width: 680px;
 }
 
-/* ----------  Page Scaffold  ---------- */
+
 .submissions-container{
   max-width:var(--max-width);
   margin:3rem auto;
@@ -31,7 +31,7 @@
   color:var(--gray-7);
 }
 
-/* ----------  Header  ---------- */
+
 .form-header{
   text-align:center;
   margin-bottom:2.5rem;
@@ -47,7 +47,7 @@
   color:var(--gray-4);
 }
 
-/* ----------  Field Groups  ---------- */
+
 .form-builder{
   display:flex;
   flex-direction:column;
@@ -63,7 +63,7 @@
   font-size:.925rem;
 }
 
-/* ----------  Inputs  ---------- */
+
 .form-container{
   background: var(--surface);
   border: 1px solid var(--border);
@@ -118,7 +118,7 @@
   text-align:center;
 }
 
-/* ----------  Checkbox / Radio  ---------- */
+
 .checkbox-group,
 .radio-group{
   display:flex;
@@ -140,7 +140,7 @@ input[type=radio]{
   accent-color:var(--primary);
 }
 
-/* ----------  Buttons  ---------- */
+
 .form-actions{
   display:flex;
   gap:1rem;
@@ -189,7 +189,7 @@ input[type=radio]{
   background:var(--primary-dark);
 }
 
-/* ----------  Mobile  ---------- */
+
 @media(max-width:600px){
   .submissions-container{
     margin:1.5rem 1rem;

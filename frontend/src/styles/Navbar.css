@@ -1,10 +1,8 @@
-/* Navbar.css */
-
 .navbar {
   position: sticky;
   top: 0;
   z-index: 200;
-  background: #1e293b; /* dark slate */
+  background: #1e293b; 
   color: #fff;
   padding: 0.8rem 2rem;
   display: flex;
@@ -23,7 +21,7 @@
 }
 
 .navbar-brand a:hover {
-  color: #38bdf8; /* cyan highlight */
+  color: #38bdf8; 
 }
 
 .navbar-links {
@@ -34,7 +32,7 @@
 
 .navbar-links a {
   text-decoration: none;
-  color: #cbd5e1; /* slate-300 */
+  color: #cbd5e1; 
   font-size: 0.95rem;
   transition: color 0.2s ease;
 }
@@ -44,7 +42,7 @@
 }
 
 .welcome-message {
-  color: #f1f5f9; /* slate-100 */
+  color: #f1f5f9; 
   font-size: 0.9rem;
   margin-left: 0.5rem;
 }
@@ -64,7 +62,7 @@
   background: #dc2626;
 }
 
-/* Responsive navbar */
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

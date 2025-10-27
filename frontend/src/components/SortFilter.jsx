@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 
-// ---- Utility: Sort function (defined outside to avoid re-creation) ----
 export const sortData = (items, criteria, order) => {
   if (!items || items.length === 0) return items;
 
@@ -22,11 +21,10 @@ export const sortData = (items, criteria, order) => {
   });
 };
 
-// ---- Component ----
 const SortFilter = ({ sortConfig, onSortChange }) => {
   const { sortBy, sortOrder } = sortConfig;
 
-  // Handle sort button clicks
+ 
   const handleSort = useCallback(
     (criteria) => {
       const newSortOrder =
@@ -36,7 +34,7 @@ const SortFilter = ({ sortConfig, onSortChange }) => {
     [sortBy, sortOrder, onSortChange]
   );
 
-  // Clear sort
+ 
   const clearSort = useCallback(() => {
     onSortChange({ sortBy: null, sortOrder: 'asc' });
   }, [onSortChange]);

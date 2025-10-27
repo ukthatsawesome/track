@@ -1,16 +1,51 @@
-# React + Vite
+# Track Frontend (Simple Guide)
+This is the “front end” (the user-facing part) of the Track application. It’s a website that lets you log in and manage Batches, Bags, Forms, Submissions, and view Reports. You don’t need to be technical to use it — this guide explains everything in plain language.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## What This App Does
+- Lets you log in securely and see your dashboard.
+- Helps you create and manage “Batches” (groups of work).
+- Lets you track “Bags” (individual items within batches).
+- Lets you build “Forms” to collect information and see “Submissions”.
+- Shows simple “Reports” to summarize your data.
 
-Currently, two official plugins are available:
+Think of it like this:
+- Batches: folders of related work.
+- Bags: items inside a batch.
+- Forms: questions you create to collect information.
+- Submissions: answers people give to your forms.
+- Reports: quick summaries to help you understand the data.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What You Need (Before You Start)
+- A computer running Windows.
+- Internet access.
+- Node.js (the app runner). Install the “LTS” version from `https://nodejs.org`.
+- The backend API running somewhere (your tech team or you will have a URL, like `http://localhost:8000/api`).
 
-## React Compiler
+## Project Location
+- Folder: `h:\Batch\track\frontend\`
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## First-Time Setup (Step-by-Step)
+1. Open “Command Prompt”.
+2. Go to the project folder:
+   ```bash
+   cd h:\Batch\track\frontend
+3. Install the app:
+   ```bash
+   npm install
+   ```
+4. Set up backend:
+   - Create a file named `.env` in the project folder.
+   - Add the following lines to `.env`:
+     ```
+     VITE_API_URL=http://localhost:8000/api
+     ```
+     (Replace `http://localhost:8000/api` with your actual backend URL if different.)
+5. Start the app:
+   ```bash
+   npm run dev
+   ```
+   (This will open the app in your browser at `http://localhost:5173`.)
 
-## Expanding the ESLint configuration
+Follow README.md in backend folder to set up the backend.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+

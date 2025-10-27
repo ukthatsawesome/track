@@ -1,11 +1,11 @@
 .filter-sort-controls {
   display: flex;
   gap: 10px;
-  /* moved spacing to .list-header */
+  
   margin-bottom: 0;
   flex-wrap: wrap;
   align-items: center;
-  /* right-align controls within the header */
+  
   justify-content: flex-end;
 }
 .filter-sort-controls button {

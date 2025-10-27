@@ -3,7 +3,7 @@ import { useBatchAPI } from '../api/batches';
 import { Link, useNavigate } from 'react-router-dom';
 import SortFilter, { sortData } from './SortFilter';
 import SearchFilter from './SearchFilter';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 import '../styles/BatchList.css';
 
 function BatchList() {
@@ -14,9 +14,9 @@ function BatchList() {
   const [error, setError] = useState(null);
   const { getBatches, partialUpdateBatch } = useBatchAPI();
   const navigate = useNavigate();
-  const { loading: authLoading, user } = useAuth(); // Get auth loading state and user
+  const { loading: authLoading, user } = useAuth();
 
-  // Local state to track per-item status updates and errors
+ 
   const [updatingStatus, setUpdatingStatus] = useState({});
   const [statusErrors, setStatusErrors] = useState({});
 
@@ -32,7 +32,7 @@ function BatchList() {
       }
     };
 
-    if (!authLoading) { // Only fetch batches if authentication is not loading
+    if (!authLoading) {
       fetchBatches();
     }
   }, [authLoading]);
@@ -41,7 +41,7 @@ function BatchList() {
     const searchKeys = ['batch', 'country', 'production_type', 'status'];
     let processedBatches = [...batches];
 
-    // 1. Filter
+   
     if (searchTerm) {
       processedBatches = processedBatches.filter(item =>
         searchKeys.some(key =>
@@ -50,7 +50,7 @@ function BatchList() {
       );
     }
 
-    // 2. Sort
+   
     return sortData(processedBatches, sortConfig.sortBy, sortConfig.sortOrder);
   }, [batches, searchTerm, sortConfig]);
 
@@ -80,13 +80,13 @@ function BatchList() {
   };
 
   const canEditStatus = (item) => {
-    // Lock when completed unless admin; admins can always edit
+   
     if (user?.is_staff) return true;
     return item.status !== 'completed';
   };
 
   const handleStatusChange = async (batchId, nextStatus) => {
-    // Optimistic update with revert on error
+   
     setUpdatingStatus(prev => ({ ...prev, [batchId]: true }));
     setStatusErrors(prev => ({ ...prev, [batchId]: '' }));
 
@@ -97,7 +97,7 @@ function BatchList() {
     try {
       await partialUpdateBatch(batchId, { status: nextStatus });
     } catch (e) {
-      // Revert and show error
+     
       console.error('Failed to update batch status:', e);
       setBatches(prevBatches);
       setStatusErrors(prev => ({
@@ -111,7 +111,7 @@ function BatchList() {
 
   return (
     <div className="batch-list-container">
-      {/* Top header with title left, controls right */}
+      {}
       <div className="list-header">
         <h2 className="batch-list-title">List of Batches</h2>
         <div className="filter-sort-controls">
@@ -144,7 +144,7 @@ function BatchList() {
                 </div>
               </Link>
 
-              {/* Removed inline status editor; keep actions lightweight */}
+              {}
               <div className="card-actions">
                 {batch.status !== 'completed' && (
                   <button

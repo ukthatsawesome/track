@@ -15,10 +15,10 @@ function BagList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { getBags, partialUpdateBag } = useBagAPI();
-  const { getBatch } = useBatchAPI(); // Get getBatch from useFormAPI
-  const { loading: authLoading, user } = useAuth(); // Get auth loading state and user
+  const { getBatch } = useBatchAPI();
+  const { loading: authLoading, user } = useAuth();
 
-  // Local state to track per-item status updates and errors
+ 
   const [updatingStatus, setUpdatingStatus] = useState({});
   const [statusErrors, setStatusErrors] = useState({});
 
@@ -26,11 +26,11 @@ function BagList() {
     const fetchBags = async () => {
       try {
         const data = await getBags();
-        // Fetch batch details for each bag
+       
         const bagsWithBatchNames = await Promise.all(data.map(async (bag) => {
           if (bag.batch) {
             const batch = await getBatch(bag.batch);
-            return { ...bag, batch_name: batch.batch }; // Assuming batch object has a 'batch' field for its name
+            return { ...bag, batch_name: batch.batch };
           }
           return { ...bag, batch_name: 'N/A' };
         }));
@@ -42,7 +42,7 @@ function BagList() {
       }
     };
 
-    if (!authLoading) { // Only fetch bags if authentication is not loading
+    if (!authLoading) {
       fetchBags();
     }
   }, [authLoading]);
@@ -51,7 +51,7 @@ function BagList() {
     const searchKeys = ['bag_id', 'batch_name', 'internal_lot_number', 'status'];
     let processedBags = [...bags];
 
-    // 1. Filter
+   
     if (searchTerm) {
       processedBags = processedBags.filter(item =>
         searchKeys.some(key =>
@@ -60,7 +60,7 @@ function BagList() {
       );
     }
 
-    // 2. Sort
+   
     return sortData(processedBags, sortConfig.sortBy, sortConfig.sortOrder);
   }, [bags, searchTerm, sortConfig]);
 
@@ -90,13 +90,13 @@ function BagList() {
   };
 
   const canEditStatus = (item) => {
-    // Lock when completed unless admin; admins can always edit
+   
     if (user?.is_staff) return true;
     return item.status !== 'completed';
   };
 
   const handleStatusChange = async (bagId, nextStatus) => {
-    // Optimistic update with revert on error
+   
     setUpdatingStatus(prev => ({ ...prev, [bagId]: true }));
     setStatusErrors(prev => ({ ...prev, [bagId]: '' }));
 
@@ -120,7 +120,7 @@ function BagList() {
 
   return (
     <div className="bag-list-container">
-      {/* Top header with title left, controls right */}
+      {}
       <div className="list-header">
         <h2 className="bag-list-title">List of Bags</h2>
         <div className="filter-sort-controls">
@@ -153,7 +153,7 @@ function BagList() {
                 </div>
               </Link>
 
-              {/* Removed inline status editor; keep actions lightweight */}
+              {}
               <div className="card-actions">
                 <Link to={`/bags/${bag.bag_id}`} className="btn btn-secondary">View Details</Link>
               </div>

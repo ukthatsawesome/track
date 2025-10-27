@@ -1,22 +1,19 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-// --- Configuration ---
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Create Context
 const AuthContext = createContext();
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
-  // --- State ---
+ 
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [remember, setRemember] = useState(false);
 
-  // --- Load from storage once on mount ---
+ 
   useEffect(() => {
     const rememberStored = localStorage.getItem('rememberMe') === 'true';
     setRemember(rememberStored);
@@ -45,14 +42,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     hydrate();
-  }, []); // <-- remove fetchUser from deps to avoid TDZ
+  }, []);
 
-  // --- Helper: Auth headers ---
+ 
   const getAuthHeaders = useCallback(() => {
     return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
   }, [accessToken]);
 
-  // --- Fetch logged-in user info ---
+ 
   const fetchUser = useCallback(
     async (token, storage) => {
       try {
@@ -70,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     []
   );
 
-  // --- Login ---
+ 
   const login = useCallback(
     async (username, password, rememberParam = false) => {
       try {
@@ -85,13 +82,13 @@ export const AuthProvider = ({ children }) => {
         storage.setItem('accessToken', access);
         storage.setItem('refreshToken', refresh);
 
-        // Ensure the other storage is clean
+       
         const otherStorage = rememberParam ? sessionStorage : localStorage;
         otherStorage.removeItem('accessToken');
         otherStorage.removeItem('refreshToken');
         otherStorage.removeItem('user');
 
-        // Persist the remember preference
+       
         localStorage.setItem('rememberMe', rememberParam ? 'true' : 'false');
 
         await fetchUser(access, storage);
@@ -104,12 +101,12 @@ export const AuthProvider = ({ children }) => {
     [fetchUser]
   );
 
-  // --- Logout ---
+ 
   const logout = useCallback(() => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
-    // Clear both storages to avoid stale data
+   
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
@@ -118,7 +115,7 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem('user');
   }, []);
 
-  // --- Refresh access token ---
+ 
   const refreshAccessToken = useCallback(async () => {
     try {
       const response = await axiosInstance.post('/token/refresh/', {
@@ -141,11 +138,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, [refreshToken, logout, remember]);
 
-  // --- Setup Axios Instance (only once) ---
+ 
   const axiosInstance = axios.create({ baseURL: API_URL });
 
   useEffect(() => {
-    // Attach interceptor once
+   
     const interceptor = axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -166,11 +163,11 @@ export const AuthProvider = ({ children }) => {
       }
     );
 
-    // Cleanup on unmount
+   
     return () => axiosInstance.interceptors.response.eject(interceptor);
   }, [refreshAccessToken]);
 
-  // --- Context Value ---
+ 
   const contextValue = {
     user,
     accessToken,
@@ -179,11 +176,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     getAuthHeaders,
     loading,
-    refreshAccessToken, // <-- expose refreshAccessToken to consumers
+    refreshAccessToken,
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
-// Hook to use Auth
 export const useAuth = () => useContext(AuthContext);

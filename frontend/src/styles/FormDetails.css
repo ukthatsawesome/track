@@ -13,7 +13,7 @@
     text-align: center;
 }
 
-/* --- View Mode Styles --- */
+
 
 .form-view-mode .form-actions {
     justify-content: center;
@@ -78,7 +78,7 @@
     margin-top: 50px;
 }
 
-/* --- Edit Mode Styles --- */
+
 
 .form-edit-mode .form-group {
     margin-bottom: 15px;
@@ -97,7 +97,7 @@
 .form-edit-mode input[type="url"],
 .form-edit-mode textarea,
 .form-edit-mode select {
-    width: calc(100% - 22px); /* Account for padding and border */
+    width: calc(100% - 22px); 
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -123,7 +123,7 @@
 
 .form-edit-mode .checkbox-group input[type="checkbox"] {
     margin-right: 10px;
-    width: auto; /* Override width for checkboxes */
+    width: auto; 
 }
 
 .form-edit-mode .checkbox-group .checkbox-label span {
@@ -189,16 +189,16 @@
     font-size: 16px;
     margin-top: 15px;
     display: block;
-    width: 100%; /* Make button full width of its container */
+    width: 100%; 
 }
 
 .add-field-button:hover {
     background-color: #218838;
 }
 
-/* --- Action Buttons --- */
 
-/* Common styles for action buttons container */
+
+
 
 .form-actions {
     display: flex;

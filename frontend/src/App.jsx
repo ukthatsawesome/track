@@ -20,7 +20,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="layout-container">
-          <Navbar /> {/* Render Navbar component */}
+          <Navbar /> {}
           <AppRoutes />
         </div>
       </Router>

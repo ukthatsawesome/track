@@ -1,6 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import BatchViewSet, BagViewSet, FormViewSet, FormFieldViewSet, SubmissionViewSet, UserInfoView
+from .views import (
+    BatchViewSet,
+    BagViewSet,
+    FormViewSet,
+    FormFieldViewSet,
+    SubmissionViewSet,
+    UserInfoView,
+)
 
 router = DefaultRouter()
 router.register(r'batches', BatchViewSet, basename='batch')

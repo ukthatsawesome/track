@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBatchAPI } from '../api/batches';
 import { useBagAPI } from '../api/bags';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 import '../styles/ReportsPage.css';
 
 function ReportsPage() {
@@ -11,7 +11,7 @@ function ReportsPage() {
   const [error, setError] = useState(null);
   const { getBatches } = useBatchAPI();
   const { getBags } = useBagAPI();
-  const { loading: authLoading } = useAuth(); // Get auth loading state
+  const { loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +27,7 @@ function ReportsPage() {
       }
     };
 
-    if (!authLoading) { // Only fetch data if authentication is not loading
+    if (!authLoading) {
       fetchData();
     }
   }, [authLoading]);
@@ -40,7 +40,7 @@ function ReportsPage() {
     return <p>Error: {error.message}</p>;
   }
 
-  // Process data for charts
+ 
   const batchesByCountry = batchData.reduce((acc, batch) => {
     acc[batch.country] = (acc[batch.country] || 0) + 1;
     return acc;

@@ -19,7 +19,7 @@ function BatchDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ Fetch batch details and associated form
+ 
   useEffect(() => {
     const fetchBatchDetails = async () => {
       try {
@@ -40,29 +40,29 @@ function BatchDetails() {
     fetchBatchDetails();
   }, [id, getBatch, getForm]);
 
-  // ✅ Only allow authorized users to edit batch status
+ 
   const canEditStatus = (batch) => {
-    if (!user) return false; // Not logged in
-    // You can customize this rule however you like:
-    // Example: staff can edit anything, others can't edit completed batches
+    if (!user) return false;
+   
+   
     return user.is_staff || batch.status !== 'completed';
   };
 
-  // ✅ Handle changing batch status safely
+ 
   const handleStatusChange = async (nextStatus) => {
     if (!batch) return;
     setUpdatingStatus(true);
     setStatusError('');
     const prev = batch;
 
-    // Optimistically update UI
+   
     setBatch({ ...batch, status: nextStatus });
 
     try {
       await partialUpdateBatch(batch.batch_id, { status: nextStatus });
     } catch (e) {
       console.error(e);
-      // Roll back UI on error
+     
       setBatch(prev);
       setStatusError(e.response?.data?.detail || 'Failed to update status.');
     } finally {
@@ -70,12 +70,12 @@ function BatchDetails() {
     }
   };
 
-  // ✅ Handle loading and error states
+ 
   if (loading) return <Loading />;
   if (error) return <div className="error-message">{error}</div>;
   if (!batch) return <div className="no-data-message">No batch data found.</div>;
 
-  // ✅ Render batch details
+ 
   return (
     <div className="batch-details-container">
       <h2>Batch Details</h2>
@@ -133,7 +133,6 @@ function BatchDetails() {
   );
 }
 
-// ✅ Centralized list of possible status options
 const STATUS_OPTIONS = [
   { value: 'draft', label: 'Draft' },
   { value: 'working', label: 'Pending' },

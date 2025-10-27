@@ -14,7 +14,7 @@ function FormList() {
   const [sortConfig, setSortConfig] = useState({ sortBy: null, sortOrder: 'asc' });
   const [error, setError] = useState(null);
   const { getForms } = useFormAPI();
-  const { loading: authLoading } = useAuth(); // Get auth loading state
+  const { loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchForms = async () => {
@@ -28,7 +28,7 @@ function FormList() {
       }
     };
 
-    if (!authLoading) { // Only fetch forms if authentication is not loading
+    if (!authLoading) {
       fetchForms();
     }
   }, [authLoading]);
@@ -37,7 +37,7 @@ function FormList() {
     const searchKeys = ['name', 'description'];
     let processedForms = [...forms];
 
-    // 1. Filter
+   
     if (searchTerm) {
       processedForms = processedForms.filter(item =>
         searchKeys.some(key =>
@@ -46,7 +46,7 @@ function FormList() {
       );
     }
 
-    // 2. Sort
+   
     return sortData(processedForms, sortConfig.sortBy, sortConfig.sortOrder);
   }, [forms, searchTerm, sortConfig]);
 

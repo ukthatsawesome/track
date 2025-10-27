@@ -29,7 +29,7 @@ const BatchPage = () => {
   const { getForms } = useFormAPI();
   const { user } = useAuth();
 
-  // Fetch forms of type 'batch'
+ 
   useEffect(() => {
     const fetchBatchForms = async () => {
       try {
@@ -43,7 +43,7 @@ const BatchPage = () => {
     fetchBatchForms();
   }, [getForms]);
 
-  // Handle static field change
+ 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -53,7 +53,7 @@ const BatchPage = () => {
         [name]: type === 'checkbox' ? checked : value,
       };
 
-      // Reset dynamic form data if a new form is selected
+     
       if (name === 'selectedForm') {
         updated.dynamicFormData = {};
       }
@@ -67,7 +67,7 @@ const BatchPage = () => {
     setApiError('');
   };
 
-  // Handle dynamic fields (from selected form)
+ 
   const handleChangeDynamicField = (fieldName, value) => {
     setFormData(prev => ({
       ...prev,
@@ -82,7 +82,7 @@ const BatchPage = () => {
     }
   };
 
-  // Validate form before submission
+ 
   const validateForm = () => {
     const newErrors = {};
 
@@ -93,7 +93,7 @@ const BatchPage = () => {
     if (!formData.quantity || formData.quantity <= 0) newErrors.quantity = 'Quantity must be positive';
     if (!formData.uoms) newErrors.uoms = 'UOM is required';
 
-    // Validate dynamic form fields if applicable
+   
     if (formData.selectedForm) {
       const selectedFormObject = batchForms.find(
         f => String(f.form_id) === String(formData.selectedForm)
@@ -112,7 +112,7 @@ const BatchPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit the form
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -148,7 +148,7 @@ const BatchPage = () => {
         {apiError && <div className="error-message">{apiError}</div>}
 
         <form onSubmit={handleSubmit} className="batch-form">
-          {/* Country */}
+          {}
           <div className="form-group">
             <label htmlFor="country">Country</label>
             <select
@@ -167,7 +167,7 @@ const BatchPage = () => {
             {errors.country && <span className="error-text">{errors.country}</span>}
           </div>
 
-          {/* Production Type */}
+          {}
           <div className="form-group">
             <label htmlFor="production_type">Production Type</label>
             <input
@@ -182,7 +182,7 @@ const BatchPage = () => {
             {errors.production_type && <span className="error-text">{errors.production_type}</span>}
           </div>
 
-          {/* Production Date */}
+          {}
           <div className="form-group">
             <label htmlFor="production_date">Production Date</label>
             <input
@@ -197,7 +197,7 @@ const BatchPage = () => {
             {errors.production_date && <span className="error-text">{errors.production_date}</span>}
           </div>
 
-          {/* Checkbox */}
+          {}
           <div className="form-group checkbox-group">
             <label>
               <input
@@ -211,7 +211,7 @@ const BatchPage = () => {
             </label>
           </div>
 
-          {/* Cluster Group */}
+          {}
           <div className="form-group">
             <label htmlFor="cluster_group">Cluster Group</label>
             <input
@@ -226,7 +226,7 @@ const BatchPage = () => {
             {errors.cluster_group && <span className="error-text">{errors.cluster_group}</span>}
           </div>
 
-          {/* Quantity */}
+          {}
           <div className="form-group">
             <label htmlFor="quantity">Quantity</label>
             <input
@@ -241,7 +241,7 @@ const BatchPage = () => {
             {errors.quantity && <span className="error-text">{errors.quantity}</span>}
           </div>
 
-          {/* UOMs */}
+          {}
           <div className="form-group">
             <label htmlFor="uoms">UOMs</label>
             <select
@@ -260,7 +260,7 @@ const BatchPage = () => {
             {errors.uoms && <span className="error-text">{errors.uoms}</span>}
           </div>
 
-          {/* Select Form */}
+          {}
           <div className="form-group">
             <label htmlFor="form_selection">Select Form</label>
             <select
@@ -279,7 +279,7 @@ const BatchPage = () => {
             {errors.selectedForm && <span className="error-text">{errors.selectedForm}</span>}
           </div>
 
-          {/* Dynamic Form Fields */}
+          {}
           {formData.selectedForm && (() => {
             const selectedForm = batchForms.find(
               f => String(f.form_id) === String(formData.selectedForm)

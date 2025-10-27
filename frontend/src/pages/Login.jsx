@@ -21,10 +21,10 @@ const Login = () => {
   const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
-    // Clear any previous errors when component mounts
+   
     setLoginError('');
     
-    // Load remember me preference
+   
     const rememberMeStored = localStorage.getItem('rememberMe') === 'true';
     const rememberedUsername = localStorage.getItem('rememberedUsername');
     
@@ -58,7 +58,7 @@ const Login = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
     
-    // Clear error for this field when user starts typing
+   
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -66,7 +66,7 @@ const Login = () => {
       }));
     }
     
-    // Clear login error when user starts typing
+   
     if (loginError) {
       setLoginError('');
     }
@@ -76,7 +76,7 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // handleSubmit function in Login component
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -91,7 +91,7 @@ const Login = () => {
       const success = await login(formData.username, formData.password, rememberMe);
       
       if (success) {
-        // Store remember me preference in localStorage
+       
         if (rememberMe) {
           localStorage.setItem('rememberMe', 'true');
           localStorage.setItem('rememberedUsername', formData.username);
@@ -100,7 +100,7 @@ const Login = () => {
           localStorage.removeItem('rememberedUsername');
         }
         
-        // Redirect to dashboard or home page after successful login
+       
         navigate(from, { replace: true });
       } else {
         setLoginError('Invalid username or password');
@@ -113,7 +113,7 @@ const Login = () => {
     }
   };
 
-  // Handle Enter key press
+ 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isLoading) {
       handleSubmit(e);

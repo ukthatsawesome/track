@@ -1,5 +1,4 @@
-// src/api/submissions.js
-// useSubmissionAPI hook
+
 import { useCallback } from 'react';
 import { useAxios } from './index';
 

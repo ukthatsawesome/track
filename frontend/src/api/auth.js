@@ -1,4 +1,4 @@
-// src/api/auth.js
+
 import { useAxios } from './index';
 
 export const useAuthAPI = () => {

@@ -4,27 +4,26 @@ import { useFormAPI } from '../api/forms';
 import '../styles/FormPage.css';
 import FormField from '../components/FormField';
 
-// FormPage component
 const FormPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    association_type: 'standalone', // Default to standalone
-    fields: [], // Array to hold form fields
+    association_type: 'standalone',
+    fields: [],
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState('');
   const navigate = useNavigate();
   const { createForm } = useFormAPI();
-  const fieldIdCounter = useRef(0); // Use ref to maintain counter across renders
+  const fieldIdCounter = useRef(0);
 
   const handleAddField = () => {
     fieldIdCounter.current += 1;
     setFormData(prev => ({
       ...prev,
       fields: [...prev.fields, { 
-        id: `field_${fieldIdCounter.current}`, // Use stable ID instead of timestamp
+        id: `field_${fieldIdCounter.current}`,
         name: '', 
         description: '', 
         field_type: 'text', 
@@ -49,12 +48,12 @@ const FormPage = () => {
         if (field.id !== fieldId) return field;
     
         if (name === 'choices') {
-          // Accept either an array (from chip editor) or a string (fallback)
+         
           const arr = Array.isArray(value)
             ? value.map(c => c.trim()).filter(Boolean)
             : String(value).split(',').map(c => c.trim()).filter(Boolean);
     
-          // De-duplicate while preserving order
+         
           const deduped = [];
           const seen = new Set();
           for (const c of arr) {
@@ -130,14 +129,14 @@ const FormPage = () => {
         ...formData,
         fields: formData.fields.map(field => ({
           name: field.name,
-          description: field.description || '', // Ensure description is sent, even if empty
+          description: field.description || '',
           field_type: field.field_type,
           required: field.required,
-          validation_rules: field.validation_rules || {}, // Ensure validation_rules is sent, even if empty
+          validation_rules: field.validation_rules || {},
         })),
       };
       await createForm(formPayload);
-      navigate('/dashboard'); // Redirect to dashboard on success
+      navigate('/dashboard');
     } catch (error) {
       console.error('Form creation failed:', error);
       if (error.response) {
@@ -207,7 +206,7 @@ const FormPage = () => {
             <h2>Form Fields</h2>
             {formData.fields.map((field) => (
               <FormField
-                key={field.id} // Use stable ID as key
+                key={field.id}
                 field={field}
                 onFieldChange={handleFieldChange}
                 onRemoveField={handleRemoveField}

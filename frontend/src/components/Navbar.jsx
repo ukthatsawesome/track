@@ -25,7 +25,7 @@ const Navbar = () => {
             <Link to="/forms">View Forms</Link>
             <Link to="/reports">View Reports</Link>
             <Link to="/batches/new">Create Batch</Link>
-            {/* <Link to="/bags/new">Create Bag</Link> */}
+            {}
             <Link to="/forms/new">Create Form</Link>
             <span className="welcome-message">Welcome, {user.username}!</span>
             <button onClick={handleLogout} className="logout-button">Logout</button>
