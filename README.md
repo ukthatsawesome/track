@@ -10,5 +10,5 @@
 - Shows clear details and summaries, including quick reports (e.g., batches by country).
 - Secure login with user accounts; works with a backend API you configure.
 
-Please read README.md in backend folder to set up the backend.
-Please read README.md in frontend folder to set up the frontend.
+- Please read README.md in backend folder to set up the backend.
+- Please read README.md in frontend folder to set up the frontend.
