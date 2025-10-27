@@ -97,29 +97,28 @@ python manage.py runserver
    DELETE  /bags/{id}/         → Delete a bag
 
 # Form API:
-   GET     /forms/             → List all forms
-   POST    /forms/             → Create a new form
-   GET     /forms/{id}/        → Retrieve a form
-   PUT     /forms/{id}/        → Update a form
-   PATCH   /forms/{id}/        → Partially update a form
-   DELETE  /forms/{id}/        → Delete a form
+-   GET     /forms/             → List all forms
+-   POST    /forms/             → Create a new form
+-   GET     /forms/{id}/        → Retrieve a form
+-   PUT     /forms/{id}/        → Update a form
+-   PATCH   /forms/{id}/        → Partially update a form
+-   DELETE  /forms/{id}/        → Delete a form
 
 # FormFields API:
-   GET     /formfields/        → List all form fields
-   POST    /formfields/        → Create a new form field
-   GET     /formfields/{id}/   → Retrieve a form field
-   PUT     /formfields/{id}/   → Update a form field
-   PATCH   /formfields/{id}/   → Partially update a form field
-   DELETE  /formfields/{id}/   → Delete a form field
+-   GET     /formfields/        → List all form fields
+-   POST    /formfields/        → Create a new form field
+-   GET     /formfields/{id}/   → Retrieve a form field
+-   PUT     /formfields/{id}/   → Update a form field
+-   PATCH   /formfields/{id}/   → Partially update a form field
+-   DELETE  /formfields/{id}/   → Delete a form field
 
 # Submission API:
-   GET     /submissions/       → List all submissions
-   POST    /submissions/       → Create a new submission
-   GET     /submissions/{id}/  → Retrieve a submission
-   PUT     /submissions/{id}/  → Update a submission
-   PATCH   /submissions/{id}/  → Partially update a submission
-   DELETE  /submissions/{id}/  → Delete a submission
-
+-   GET     /submissions/       → List all submissions
+-   POST    /submissions/       → Create a new submission
+-   GET     /submissions/{id}/  → Retrieve a submission
+-   PUT     /submissions/{id}/  → Update a submission
+-   PATCH   /submissions/{id}/  → Partially update a submission
+-   DELETE  /submissions/{id}/  → Delete a submission
 
 # User Info API:
-   GET     /me/                → Get authenticated user’s info
+-   GET     /me/                → Get authenticated user’s info
